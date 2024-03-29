@@ -34,7 +34,7 @@ async function main() {
         });
         let count = luckyDetail.content.availableJoinTimesDTO.freeAvailableJoinTimes;
         if (count > 0) {
-            for (let i = 1; i < count; i++) {
+            for (let i = 1; i <= count; i++) {
                 await $.wait(5000);
                 let luckyLottery = await commonPost("/mkt/activities/lucky:join", {
                     "verificationCode": "",
@@ -73,8 +73,12 @@ async function getCookie() {
     const newData = {"memberId": memberId, "token": token}
     const index = GuJing.findIndex(e => e.memberId == newData.memberId);
     if (index !== -1) {
-        GuJing[index] = newData;
-        $.msg($.name, `🎉用户${newData.memberId}更新token成功!`, ``);
+        if (GuJing[index].token == newData.token) {
+            return
+        } else {
+            GuJing[index] = newData;
+            $.msg($.name, `🎉用户${newData.memberId}更新token成功!`, ``);
+        }
     } else {
         GuJing.push(newData)
         $.msg($.name, `🎉新增用户${newData.memberId}成功!`, ``);

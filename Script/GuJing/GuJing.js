@@ -29,7 +29,7 @@ async function main() {
         if (count > 0) {
             for (let i = 1; i < count; i++) {
                 let luckyLottery = await commonPost("/mkt/activities/lucky:join",{"verificationCode":"","activityId":"110000525","preview":false,"latitude":32.310428619384766,"longitude":118.34776306152344});
-                let name = luckyLottery.content.actAwardName;
+                let name = luckyLottery.content[0].actAwardName;
                 if (name.includes("积分") || name.includes("谢谢惠顾")) {
                     console.log(name)
                 } else {

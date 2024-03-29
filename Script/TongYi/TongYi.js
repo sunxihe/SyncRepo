@@ -9,7 +9,7 @@ const TongYi = ($.isNode() ? process.env.TongYi : $.getjson("TongYi")) || [];
 })().catch((e) => {$.log(e)}).finally(() => {$.done({});});
 
 async function main() {
-    for (const item of GuJing) {
+    for (const item of TongYi) {
         token = item.token;
         memberId = item.memberId;
         console.log(`用户：${memberId}开始任务`)
@@ -106,7 +106,7 @@ async function getCookie() {
         TongYi.push(newData)
         $.msg($.name, `🎉新增用户${newData.memberId}成功!`, ``);
     }
-    $.setjson(TongYi, "GuJing");
+    $.setjson(TongYi, "TongYi");
 }
 
 async function commonPost(url,body) {

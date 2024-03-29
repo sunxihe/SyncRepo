@@ -9,8 +9,6 @@ const GuJing = ($.isNode() ? process.env.GuJing : $.getjson("GuJing")) || [];
 })().catch((e) => {$.log(e)}).finally(() => {$.done({});});
 
 async function main() {
-    let token;
-    let memberId;
     for (const item of GuJing) {
         token = item.token;
         memberId = item.memberId;
@@ -67,6 +65,9 @@ async function main() {
 //获取token
 async function getCookie() {
     const token = $request.headers["Access-Token"];
+    if (!token) {
+        return
+    }
     const body = $.toObj($response.body);
     const memberId = body.content.vipMemberPointDTO.memberId;
     const newData = {"memberId": memberId, "token": token}

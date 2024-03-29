@@ -9,6 +9,8 @@ const GuJing = ($.isNode() ? process.env.GuJing : $.getjson("GuJing")) || [];
 })().catch((e) => {$.log(e)}).finally(() => {$.done({});});
 
 async function main() {
+    let token;
+    let memberId;
     for (const item of GuJing) {
         token = item.token;
         memberId = item.memberId;
@@ -16,19 +18,33 @@ async function main() {
         //签到
         console.log("开始签到")
         console.log("——————")
-        let sign = await commonPost("/mkt/activities/sign:join",{"activityId":"110001000","preview":false});
+        let sign = await commonPost("/mkt/activities/sign:join", {"activityId": "110001000", "preview": false});
         if (sign.code == 200) {
             console.log("签到成功")
         } else {
             console.log(sign.chnDesc)
         }
+        await $.wait(5000);
         console.log("\n开始抽奖")
         console.log("——————")
-        let luckyDetail = await commonPost("/mkt/activities/lucky:search",{"verificationCode":"","activityId":"110000525","preview":false,"latitude":32.310428619384766,"longitude":118.34776306152344});
+        let luckyDetail = await commonPost("/mkt/activities/lucky:search", {
+            "verificationCode": "",
+            "activityId": "110000525",
+            "preview": false,
+            "latitude": 32.310428619384766,
+            "longitude": 118.34776306152344
+        });
         let count = luckyDetail.content.availableJoinTimesDTO.freeAvailableJoinTimes;
         if (count > 0) {
             for (let i = 1; i < count; i++) {
-                let luckyLottery = await commonPost("/mkt/activities/lucky:join",{"verificationCode":"","activityId":"110000525","preview":false,"latitude":32.310428619384766,"longitude":118.34776306152344});
+                await $.wait(5000);
+                let luckyLottery = await commonPost("/mkt/activities/lucky:join", {
+                    "verificationCode": "",
+                    "activityId": "110000525",
+                    "preview": false,
+                    "latitude": 32.310428619384766,
+                    "longitude": 118.34776306152344
+                });
                 let name = luckyLottery.content[0].actAwardName;
                 if (name.includes("积分") || name.includes("谢谢惠顾")) {
                     console.log(name)
@@ -40,10 +56,11 @@ async function main() {
             console.log("今日抽奖次数已用完")
         }
         //获取信息
+        await $.wait(5000);
         console.log("\n——————")
         let info = await commonGet("/member/info");
         console.log(`拥有积分: ${info.content.vipMemberPointDTO.getPoint}`)
-        $.msg($.name , `用户：${memberId}`, `拥有积分: ${info.content.vipMemberPointDTO.getPoint}`);
+        $.msg($.name, `用户：${memberId}`, `拥有积分: ${info.content.vipMemberPointDTO.getPoint}`);
     }
 }
 

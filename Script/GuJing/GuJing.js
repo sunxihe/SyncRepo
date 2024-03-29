@@ -53,7 +53,7 @@ async function getCookie() {
     const body = $.toObj($response.body);
     const memberId = body.content.vipMemberPointDTO.memberId;
     const newData = {"memberId": memberId, "token": token}
-    const index = GuJing.findIndex(e => e.memberId == GuJing.memberId);
+    const index = GuJing.findIndex(e => e.memberId == newData.memberId);
     if (index !== -1) {
         GuJing[index] = newData;
         $.msg($.name, `🎉用户${newData.memberId}更新token成功!`, ``);

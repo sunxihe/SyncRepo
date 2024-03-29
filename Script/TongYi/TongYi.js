@@ -87,7 +87,7 @@ async function collectCards(body) {
 }
 
 async function getCookie() {
-    const token = $request.headers["X-WX-Token"];
+    const token = $request.headers["x-wx-token"];
     if (!token) {
         return
     }

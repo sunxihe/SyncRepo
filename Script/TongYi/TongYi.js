@@ -92,7 +92,7 @@ async function getCookie() {
         return
     }
     const body = $.toObj($response.body);
-    const memberId = body.data.membershipElementList[0].membershipPlanId;
+    const memberId = body.data.nickname;
     const newData = {"memberId": memberId, "token": token}
     const index = TongYi.findIndex(e => e.memberId == newData.memberId);
     if (index !== -1) {
@@ -100,10 +100,12 @@ async function getCookie() {
             return
         } else {
             TongYi[index] = newData;
+            console.log(newData.token)
             $.msg($.name, `🎉用户${newData.memberId}更新token成功!`, ``);
         }
     } else {
         TongYi.push(newData)
+        console.log(newData.token)
         $.msg($.name, `🎉新增用户${newData.memberId}成功!`, ``);
     }
     $.setjson(TongYi, "TongYi");
@@ -133,7 +135,7 @@ async function commonPost(url,body) {
                 'x-biz-id': '226',
                 'x-tp-signature': '3dd0d86948f6b0f5eca15f88075d87d75f727e19',
                 'cloud-project-name': 'tongyixiangmu',
-                'X-WX-Token': '85e14b6972ad1fe3dbb7146eb58cfb349b380d2088a18de67e76214d7023b17709bc67365b958c9faed9b384c6946c9d',
+                'X-WX-Token': token,
                 'Cookie': 'rprm_cuid=1728001288g653gtbbgk',
                 'cloud-pid': '4020112618957',
                 'parentrpcid': '304dd45191e4530b',

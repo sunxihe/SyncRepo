@@ -13,8 +13,14 @@ async function main() {
         token = item.token;
         memberId = item.memberId;
         console.log(`用户：${memberId}开始任务`)
+        //每日登录奖励
+        console.log("开始每日登录奖励")
+        console.log("——————")
+        let login = await commonPost("/login/info", {"belongToId":1,"memberId":memberId});
+        console.log(login.chnDesc)
+        await $.wait(5000);
         //签到
-        console.log("开始签到")
+        console.log("\n开始签到")
         console.log("——————")
         let sign = await commonPost("/mkt/activities/sign:join", {"activityId": "110001000", "preview": false});
         if (sign.code == 200) {

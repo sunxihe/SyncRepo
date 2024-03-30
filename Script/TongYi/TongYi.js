@@ -1,5 +1,6 @@
 const $ = new Env('统一');
 const TongYi = ($.isNode() ? process.env.TongYi : $.getjson("TongYi")) || [];
+let TongYi_Help = ($.isNode() ? process.env.TongYi_Help : $.getdata("TongYi_Help")) || [];
 !(async () => {
     if (typeof $request != "undefined") {
         await getCookie();
@@ -96,6 +97,16 @@ async function collectCards(body) {
     } else {
         console.log("今日抽奖次数已用完")
     }
+    //助力
+    for (const wid of TongYi_Help) {
+        let helpLightCard = await commonPost("/interactive/qianxi/amasscard/api/helpLightCard",{"appid":"wx532ecb3bdaaf92f9","basicInfo":{"vid":6013753979957,"vidType":2,"bosId":4020112618957,"productId":165646,"productInstanceId":3169913957,"productVersionId":"16233","merchantId":2000020692957,"tcode":"weimob","cid":176205957},"extendInfo":{"wxTemplateId":7526,"childTemplateIds":[{"customId":90004,"version":"crm@0.1.11"},{"customId":90002,"version":"ec@42.3"},{"customId":90006,"version":"hudong@0.0.201"},{"customId":90008,"version":"cms@0.0.419"}],"analysis":[],"quickdeliver":{"enable":false},"bosTemplateId":1000001420,"youshu":{"enable":false},"source":1,"channelsource":5,"refer":"hd-card-home","mpScene":1007},"queryParameter":{"tracePromotionId":"100039234","tracepromotionid":"100039234"},"i18n":{"language":"zh","timezone":"8"},"pid":"4020112618957","storeId":"0","activityId":20001337637,"source":1,"ownerWid":wid,"_version":"2.9.2","appletVersion":280,"_transformBasicInfo":true,"v":"76e04a82cc9efce6e19336bfddab891410029744","operationSource":4,"tracePromotionId":"100039234","tracepromotionid":"100039234","vid":6013753979957,"vidType":2,"bosId":4020112618957,"productId":165646,"productInstanceId":3169913957,"productVersionId":"16233","merchantId":2000020692957,"tcode":"weimob","cid":176205957,"vidTypes":[2],"openid":"oBk224m4im1J9PnLUe8AMagujqgM"})
+        if (helpLightCard.errcode == 0) {
+            console.log(`助力用户：${helpLightCard.data.ownerNick} 成功`)
+            console.log(`获得卡片：${helpLightCard.data.cardName}`)
+        } else {
+            console.log(helpLightCard.errmsg)
+        }
+    }
 }
 
 async function getCookie() {
@@ -106,7 +117,6 @@ async function getCookie() {
     const body = $.toObj($response.body);
     const memberId = body.data.nickname;
     const wid = body.data.data.wid;
-    let TongYi_Help = ($.isNode() ? process.env.TongYi_Help : $.getdata("TongYi_Help")) || [];
     const i = TongYi_Help.findIndex(e => e == wid);
     if (i == -1) {
         TongYi_Help.push(wid)

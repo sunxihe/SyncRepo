@@ -1,6 +1,6 @@
 const $ = new Env('统一');
 const TongYi = ($.isNode() ? process.env.TongYi : $.getjson("TongYi")) || [];
-let TongYi_Help = ($.isNode() ? process.env.TongYi_Help : $.getdata("TongYi_Help")) || [];
+let TongYi_Help = ($.isNode() ? process.env.TongYi_Help : $.getjson("TongYi_Help")) || [];
 !(async () => {
     if (typeof $request != "undefined") {
         await getCookie();
@@ -122,7 +122,7 @@ async function getCookie() {
         TongYi_Help.push(wid)
         console.log(`新增助力码：${wid}`)
         $.msg($.name, `🎉新增助力码${wid}成功!`, ``);
-        $.setdata(TongYi_Help, "TongYi_Help");
+        $.setjson(TongYi_Help, "TongYi_Help");
     }
     const newData = {"memberId": memberId, "token": token}
     const index = TongYi.findIndex(e => e.memberId == newData.memberId);

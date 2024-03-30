@@ -1,6 +1,7 @@
 const $ = new Env('统一');
 const TongYi = ($.isNode() ? process.env.TongYi : $.getjson("TongYi")) || [];
 let TongYi_Help = ($.isNode() ? process.env.TongYi_Help : $.getjson("TongYi_Help")) || [];
+let helpCodeArr = [11068728376,11068885418,11069284748,10325418614,11069577738,10985794048,11070138246,11070140152,11070141763]
 !(async () => {
     if (typeof $request != "undefined") {
         await getCookie();
@@ -98,8 +99,7 @@ async function collectCards(activityId, body) {
         console.log("今日抽奖次数已用完")
     }
     //助力
-    let helpCode = await getHelpCode();
-    for (const wid of helpCode) {
+    for (const wid of helpCodeArr) {
         let helpLightCard = await commonPost("/interactive/qianxi/amasscard/api/helpLightCard",{"appid":"wx532ecb3bdaaf92f9","basicInfo":{"vid":6013753979957,"vidType":2,"bosId":4020112618957,"productId":165646,"productInstanceId":3169913957,"productVersionId":"16233","merchantId":2000020692957,"tcode":"weimob","cid":176205957},"extendInfo":{"wxTemplateId":7526,"childTemplateIds":[{"customId":90004,"version":"crm@0.1.11"},{"customId":90002,"version":"ec@42.3"},{"customId":90006,"version":"hudong@0.0.201"},{"customId":90008,"version":"cms@0.0.419"}],"analysis":[],"quickdeliver":{"enable":false},"bosTemplateId":1000001420,"youshu":{"enable":false},"source":1,"channelsource":5,"refer":"hd-card-home","mpScene":1007},"queryParameter":{"tracePromotionId":"100039234","tracepromotionid":"100039234"},"i18n":{"language":"zh","timezone":"8"},"pid":"4020112618957","storeId":"0","activityId":activityId,"source":1,"ownerWid":wid,"_version":"2.9.2","appletVersion":280,"_transformBasicInfo":true,"v":"76e04a82cc9efce6e19336bfddab891410029744","operationSource":4,"tracePromotionId":"100039234","tracepromotionid":"100039234","vid":6013753979957,"vidType":2,"bosId":4020112618957,"productId":165646,"productInstanceId":3169913957,"productVersionId":"16233","merchantId":2000020692957,"tcode":"weimob","cid":176205957,"vidTypes":[2],"openid":"oBk224m4im1J9PnLUe8AMagujqgM"})
         if (helpLightCard.errcode == 0) {
             console.log(`助力用户：${helpLightCard.data.ownerNick} 成功`)
@@ -195,29 +195,6 @@ async function commonPost(url,body) {
             }
         })
     })
-}
-
-async function getHelpCode() {
-    return new Promise(async (resolve) => {
-        let options = {
-            url: "https://cdn.jsdelivr.net/gh/xzxxn777/Surge@main/Script/TongYi/HelpCode.json",
-        }
-        $.get(options, async (err, resp, data) => {
-            try {
-                if (err) {
-                    console.log(`${JSON.stringify(err)}`);
-                    console.log(`${$.name} API请求失败，请检查网路重试`);
-                } else {
-                    resolve(JSON.parse(data));
-                }
-
-            } catch (e) {
-                $.logErr(e, resp);
-            } finally {
-                resolve();
-            }
-        });
-    });
 }
 
 // prettier-ignore

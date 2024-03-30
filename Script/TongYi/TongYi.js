@@ -21,7 +21,7 @@ async function main() {
             await $.wait(5000);
             let sign = await commonPost("/onecrm/mactivity/sign/misc/sign/activity/core/c/sign",{"appid":"wx532ecb3bdaaf92f9","basicInfo":{"vid":6013753979957,"vidType":2,"bosId":4020112618957,"productId":146,"productInstanceId":3168798957,"productVersionId":"14026","merchantId":2000020692957,"tcode":"weimob","cid":176205957},"extendInfo":{"wxTemplateId":7526,"childTemplateIds":[{"customId":90004,"version":"crm@0.1.11"},{"customId":90002,"version":"ec@42.3"},{"customId":90006,"version":"hudong@0.0.201"},{"customId":90008,"version":"cms@0.0.419"}],"analysis":[],"quickdeliver":{"enable":false},"bosTemplateId":1000001420,"youshu":{"enable":false},"source":1,"channelsource":5,"refer":"onecrm-signgift","mpScene":1089},"queryParameter":{"tracePromotionId":"100039234","tracepromotionid":"100039234"},"i18n":{"language":"zh","timezone":"8"},"pid":"4020112618957","storeId":"0","customInfo":{"source":0,"wid":11068728376},"tracePromotionId":"100039234","tracepromotionid":"100039234"})
             console.log(`获得：${sign.data.fixedReward.points}积分 ${sign.data.fixedReward.growth}成长值`)
-            console.log(`额外获得：${sign.data.fixedReward.points}积分 ${sign.data.fixedReward.growth}成长值`)
+            console.log(`额外获得：${sign.data.extraReward.points}积分 ${sign.data.extraReward.growth}成长值`)
         }
 
         //小名

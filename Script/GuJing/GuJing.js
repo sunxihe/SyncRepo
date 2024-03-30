@@ -23,6 +23,7 @@ async function main() {
             console.log(sign.chnDesc)
         }
         await $.wait(5000);
+        //抽奖
         console.log("\n开始抽奖")
         console.log("——————")
         let luckyDetail = await commonPost("/mkt/activities/lucky:search", {
@@ -53,12 +54,24 @@ async function main() {
         } else {
             console.log("今日抽奖次数已用完")
         }
+        //天降红包
+        console.log("\n天降红包")
+        console.log("——————")
+        let red = await commonPost("/mkt/activities/red_packet:join", {"verificationCode":"","activityId":"110000555","redpackCnt":1000,"preview":false,"latitude":32.3110466003418,"longitude":118.34707641601562});
+        if (red.code == 200) {
+            for (const actAward of red.content) {
+                console.log(actAward.actAwardName)
+            }
+        } else {
+            console.log(red.chnDesc)
+        }
         //获取信息
         await $.wait(5000);
         console.log("\n——————")
         let info = await commonGet("/member/info");
         console.log(`拥有积分: ${info.content.vipMemberPointDTO.getPoint}`)
         $.msg($.name, `用户：${memberId}`, `拥有积分: ${info.content.vipMemberPointDTO.getPoint}`);
+        await $.wait(5000);
     }
 }
 

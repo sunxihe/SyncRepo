@@ -105,6 +105,15 @@ async function getCookie() {
     }
     const body = $.toObj($response.body);
     const memberId = body.data.nickname;
+    const wid = body.data.data.wid;
+    let TongYi_Help = ($.isNode() ? process.env.TongYi_Help : $.getdata("TongYi_Help")) || [];
+    const i = TongYi_Help.findIndex(e => e == wid);
+    if (i == -1) {
+        TongYi_Help.push(wid)
+        console.log(`新增助力码：${wid}`)
+        $.msg($.name, `🎉新增助力码${wid}成功!`, ``);
+        $.setjson(TongYi_Help, "TongYi_Help");
+    }
     const newData = {"memberId": memberId, "token": token}
     const index = TongYi.findIndex(e => e.memberId == newData.memberId);
     if (index !== -1) {

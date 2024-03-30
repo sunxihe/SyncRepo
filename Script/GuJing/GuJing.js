@@ -60,7 +60,12 @@ async function main() {
         let red = await commonPost("/mkt/activities/red_packet:join", {"verificationCode":"","activityId":"110000555","redpackCnt":1000,"preview":false,"latitude":32.3110466003418,"longitude":118.34707641601562});
         if (red.code == 200) {
             for (const actAward of red.content) {
-                console.log(actAward.actAwardName)
+                let name = actAward.actAwardName;
+                if (name.includes("积分") || name.includes("谢谢惠顾")) {
+                    console.log(name)
+                } else {
+                    $.msg($.name, `用户：${memberId}`, `抽奖获得: ${name}`);
+                }
             }
         } else {
             console.log(red.chnDesc)
@@ -90,10 +95,12 @@ async function getCookie() {
             return
         } else {
             GuJing[index] = newData;
+            console.log(newData.token)
             $.msg($.name, `🎉用户${newData.memberId}更新token成功!`, ``);
         }
     } else {
         GuJing.push(newData)
+        console.log(newData.token)
         $.msg($.name, `🎉新增用户${newData.memberId}成功!`, ``);
     }
     $.setjson(GuJing, "GuJing");

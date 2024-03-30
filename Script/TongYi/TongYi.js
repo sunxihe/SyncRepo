@@ -200,7 +200,7 @@ async function commonPost(url,body) {
 async function getHelpCode() {
     return new Promise(async (resolve) => {
         let options = {
-            url: "https://raw.githubusercontent.com/xzxxn777/Surge/main/Script/TongYi/HelpCode.json",
+            url: "https://cdn.jsdelivr.net/gh/xzxxn777/Surge@main/Script/TongYi/HelpCode.json",
         }
         $.get(options, async (err, resp, data) => {
             try {

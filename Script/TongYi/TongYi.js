@@ -116,7 +116,7 @@ async function getCookie() {
     }
     const body = $.toObj($response.body);
     const memberId = body.data.nickname;
-    const wid = body.data.data.wid;
+    const wid = body.data.wid;
     const i = TongYi_Help.findIndex(e => e == wid);
     if (i == -1) {
         TongYi_Help.push(wid)

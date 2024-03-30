@@ -122,7 +122,7 @@ async function getCookie() {
         TongYi_Help.push(wid)
         console.log(`新增助力码：${wid}`)
         $.msg($.name, `🎉新增助力码${wid}成功!`, ``);
-        $.setjson(TongYi_Help, "TongYi_Help");
+        $.setdata(TongYi_Help, "TongYi_Help");
     }
     const newData = {"memberId": memberId, "token": token}
     const index = TongYi.findIndex(e => e.memberId == newData.memberId);

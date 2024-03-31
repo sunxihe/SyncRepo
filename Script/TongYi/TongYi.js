@@ -64,6 +64,10 @@ async function lottery(body) {
         for (let i = 1; i <= count; i++) {
             await $.wait(5000);
             let play = await commonPost("/orchestration/mobile/activity/draw/play",body)
+            if (play.errcode == 101100003) {
+                console.log(play.errmsg)
+                break
+            }
             let name = play.data.prizes[0].name;
             if (name) {
                 if (name.includes("积分")) {

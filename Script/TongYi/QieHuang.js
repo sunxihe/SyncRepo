@@ -29,13 +29,6 @@ async function main() {
             let help = await commonGet(`/friend-help/help?userId=${helpUser}&type=0&randomId=${randomId}`, {userId: helpUser, type: 0, randomId: randomId})
             console.log(help)
         }
-        // 助力角色
-        console.log("————————————")
-        console.log("开始助力解锁角色")
-        for (const helpRoleItem of helpRole) {
-            let helpRoleData = await commonGet(`/user-role/friendHelpUnlock?userRoleId=${helpRoleItem}`,{userRoleId:helpRoleItem})
-            console.log(helpRoleData)
-        }
         console.log("————————————")
         console.log("开始收集阳光")
         let autoSun = await commonGet("/userInfo/autoSun")
@@ -143,6 +136,12 @@ async function main() {
                 //解锁
                 if (role.roleId == 10003) {
                     console.log(`解锁角色助力码：${role.id}`)
+                    // 助力角色
+                    console.log("开始助力解锁角色")
+                    for (const helpRoleItem of helpRole) {
+                        let helpRoleData = await commonGet(`/user-role/friendHelpUnlock?userRoleId=${helpRoleItem}`,{userRoleId:helpRoleItem})
+                        console.log(helpRoleData)
+                    }
                 } else {
                     let unlockRole = await commonGet(`/user-role/goldUnlock?roleId=${role.roleId}`, {roleId: role.roleId})
                     if (unlockRole.code == 0) {
@@ -167,6 +166,16 @@ async function main() {
                     for (const answer of go.data.gameMapEvent.gameMapEventAnswerList) {
                         console.log(`获得：${answer.dropReward.name} * ${answer.dropReward.finalNum}`)
                     }
+                } else if (go.data.eventId == 102) {
+                    let jsonId = '',minNum = 0;
+                    for (const answer of go.data.gameMapEvent.gameMapEventAnswerList) {
+                        if (minNum <= answer.dropReward.minNum) {
+                            minNum = answer.dropReward.minNum;
+                            jsonId = answer.jsonId;
+                        }
+                    }
+                    let up = await commonGet(`/common/take-risk/up?jsonId=${jsonId}`,{jsonId: jsonId})
+                    console.log(up)
                 } else {
                     console.log(go.data.eventId)
                     console.log(go.data.gameMapEvent.gameMapEventAnswerList)
@@ -174,12 +183,30 @@ async function main() {
             }
         }
         //拜访
-        //console.log("————————————")
-        //console.log("拜访")
-        // let addShareFriend = await commonGet("/friend/addShareFriend?friendUserId=1773742212391776256",{friendUserId: 1773742212391776256})
-        // console.log(addShareFriend)
-        // let findFriend = await commonGet("/friend/findFriend")
-        // console.log(findFriend)
+        console.log("————————————")
+        console.log("拜访")
+        //添加朋友
+        for (const helpUser of helpTask) {
+            let addShareFriend = await commonGet(`/friend/addShareFriend?friendUserId=${helpUser}`,{friendUserId: helpUser})
+            console.log(addShareFriend)
+        }
+        //获取朋友列表
+        let findFriend = await commonGet("/friend/findFriend")
+        for (const friend of findFriend.data.friendList) {
+            //拜访
+            console.log(`拜访朋友：${friend.userId}`)
+            let visit = await commonGet(`/user-land/getByUserId?userId=${friend.userId}`,{userId: friend.userId})
+            if (visit.code == 0) {
+                console.log(`拜访成功`)
+                let stealGold = await commonGet(`/friend/stealGold?friendUserId=${friend.userId}`,{friendUserId: friend.userId})
+                console.log(stealGold)
+                console.log(`获得：调料包 * ${stealGold.data}`)
+                let checkUserCapCode = await commonPost(`/checkUserCapCode`,{"xpos":239})
+                console.log(checkUserCapCode)
+            } else {
+                console.log(visit)
+            }
+        }
         console.log("————————————")
         console.log("获取库存信息")
         let get = await commonGet("/userInfo/get")

@@ -171,7 +171,10 @@ async function main() {
 
 async function getCookie() {
     const body = $.toObj($request.body);
-    const i = QieHuang_Body.findIndex(e => e == body);
+    if (!body.wid || !body.thirdId) {
+        return
+    }
+    const i = QieHuang_Body.findIndex(e => e == body.wid);
     if (i == -1) {
         QieHuang_Body.push(body)
         console.log(`新增用户：${body.wid}`)

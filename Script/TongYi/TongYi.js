@@ -96,6 +96,10 @@ async function collectCards(activityId, body) {
         for (let i = 1; i <= count; i++) {
             await $.wait(5000);
             let lightCard = await commonPost("/interactive/qianxi/amasscard/api/lightCard",body)
+            if (lightCard.errcode == 728) {
+                console.log(lightCard.errmsg)
+                break
+            }
             let cardId = lightCard.data.cardId;
             console.log(`获得卡片：${arr[cardId]}`)
         }

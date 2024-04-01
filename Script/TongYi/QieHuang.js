@@ -206,6 +206,10 @@ async function main() {
             if (visit.code == 0) {
                 console.log(`拜访成功`)
                 let stealGold = await commonGet(`/friend/stealGold?friendUserId=${friend.userId}`,{friendUserId: friend.userId})
+                if (stealGold.code == 4000) {
+                    console.log("验证失败导致部分功能暂时用不了")
+                    break
+                }
                 console.log(stealGold)
                 console.log(`获得：调料包 * ${stealGold.data}`)
                 //let checkUserCapCode = await commonPost(`/checkUserCapCode`,{"xpos":239})

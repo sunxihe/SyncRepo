@@ -3,6 +3,8 @@ let token = '';
 let step = ["种植番茄","发育期","幼苗期","开花期","结果期","收获期"];
 let prizeType = [{"sun":"阳光"},{"dice":"烤包子"},{"gold":"调料包"}];
 let QieHuang_Body = ($.isNode() ? process.env.QieHuang_Body : $.getjson("QieHuang_Body")) || [];
+let helpRole = ["1773742289348866048","1774452698577244160","1774636875322888192"],
+    helpTask = ["1773742212391776256","1774452631353331712","1774636807295471616"];
 !(async () => {
     if (typeof $request != "undefined") {
         await getCookie();
@@ -19,6 +21,22 @@ async function main() {
         let userInfo = await commonPost("/public/api/login", item)
         console.log(`用户：${wid} 登录成功 token = ${userInfo.data.token}`)
         token = userInfo.data.token;
+        //助力
+        console.log("开始每日任务助力")
+        for (const helpUser of helpTask) {
+            //if (helpUser == userInfo.data.userId) continue
+            let randomId = randomString(32,'0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM');
+            let help = await commonGet(`/friend-help/help?userId=${helpUser}&type=0&randomId=${randomId}`, {userId: helpUser, type: 0, randomId: randomId})
+            console.log(help)
+        }
+        // 助力角色
+        console.log("————————————")
+        console.log("开始助力解锁角色")
+        for (const helpRoleItem of helpRole) {
+            let helpRoleData = await commonGet(`/user-role/friendHelpUnlock?userRoleId=${helpRoleItem}`,{userRoleId:helpRoleItem})
+            console.log(helpRoleData)
+        }
+        console.log("————————————")
         console.log("开始收集阳光")
         let autoSun = await commonGet("/userInfo/autoSun")
         console.log(`获得阳光：${autoSun.data.sun}`)
@@ -110,9 +128,6 @@ async function main() {
                 }
             }
         }
-        //助力
-        //let help = await commonGet("/friend-help/help?userId=1773742212391776256&type=0&randomId=aINcqP2YJBa2zaUc2N8iHJbEmYAYMWsH",{userId: 1773742212391776256, type: 0, randomId: "aINcqP2YJBa2zaUc2N8iHJbEmYAYMWsH"})
-        //console.log(help)
         console.log("————————————")
         console.log("去旅行")
         //在线奖励
@@ -126,11 +141,15 @@ async function main() {
             if (role.status === 0) {
                 console.log(`角色：${role.name} 未解锁`)
                 //解锁
-                let unlockRole = await commonGet(`/user-role/goldUnlock?roleId=${role.roleId}`, {roleId: role.roleId})
-                if (unlockRole.code == 0) {
-                    console.log(`解锁成功`)
+                if (role.roleId == 10003) {
+                    console.log(`解锁角色助力码：${role.id}`)
                 } else {
-                    console.log(unlockRole)
+                    let unlockRole = await commonGet(`/user-role/goldUnlock?roleId=${role.roleId}`, {roleId: role.roleId})
+                    if (unlockRole.code == 0) {
+                        console.log(`解锁成功`)
+                    } else {
+                        console.log(unlockRole)
+                    }
                 }
             } else {
                 console.log(`角色：${role.name} 已解锁`)
@@ -164,6 +183,7 @@ async function main() {
         console.log("————————————")
         console.log("获取库存信息")
         let get = await commonGet("/userInfo/get")
+        console.log(`每日任务助力码：${get.data.userId}`)
         console.log(`调料包：${get.data.gold} 番茄：${get.data.score} 阳光：${get.data.sun}`)
         $.msg($.name, `用户：${wid}`, `拥有调料包：${get.data.gold} 番茄：${get.data.score} 阳光：${get.data.sun}`);
     }

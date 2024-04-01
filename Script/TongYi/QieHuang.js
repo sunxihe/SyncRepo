@@ -194,6 +194,9 @@ async function main() {
         let findFriend = await commonGet("/friend/findFriend")
         for (const friend of findFriend.data.friendList) {
             //拜访
+            if (!friend.stealFlag) {
+                continue
+            }
             console.log(`拜访朋友：${friend.userId}`)
             let visit = await commonGet(`/user-land/getByUserId?userId=${friend.userId}`,{userId: friend.userId})
             if (visit.code == 0) {

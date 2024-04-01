@@ -170,7 +170,7 @@ async function main() {
 }
 
 async function getCookie() {
-    const body = $.toObj($response.body);
+    const body = $.toObj($request.body);
     const i = QieHuang_Body.findIndex(e => e == body);
     if (i == -1) {
         QieHuang_Body.push(body)

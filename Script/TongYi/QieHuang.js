@@ -3,8 +3,8 @@ let token = '';
 let step = ["种植番茄","发育期","幼苗期","开花期","结果期","收获期"];
 let prizeType = [{"sun":"阳光"},{"dice":"烤包子"},{"gold":"调料包"}];
 let QieHuang_Body = ($.isNode() ? process.env.QieHuang_Body : $.getjson("QieHuang_Body")) || [];
-let helpRole = ["1773742289348866048","1774452698577244160","1774636875322888192"],
-    helpTask = ["1773742212391776256","1774452631353331712","1774636807295471616"];
+let helpRole = ["1773742289348866048","1774452698577244160","1774636875322888192","1774644600090005504","1774644956682137600","1774091319970238464","1774092068184535040"],
+    helpTask = ["1773742212391776256","1774452631353331712","1774636807295471616","1774096506474598400","1774644904452067328","1773739743086776320","1774091259082321920","1774092017642377216","1774092684184391680"];
 !(async () => {
     if (typeof $request != "undefined") {
         await getCookie();
@@ -160,9 +160,13 @@ async function main() {
             for (let i = 0; i < getCurrent.data.num; i++) {
                 //出发
                 let go = await commonGet("/common/take-risk/go")
+                if (go.code == 4000) {
+                    console.log("验证失败导致部分功能暂时用不了")
+                    break
+                }
                 let finish = go.data.current - getCurrent.data.current;
+                console.log(`走了${finish}步`)
                 if (go.data.eventId == 101) {
-                    console.log(`走了${finish}步`)
                     for (const answer of go.data.gameMapEvent.gameMapEventAnswerList) {
                         console.log(`获得：${answer.dropReward.name} * ${answer.dropReward.finalNum}`)
                     }
@@ -204,8 +208,8 @@ async function main() {
                 let stealGold = await commonGet(`/friend/stealGold?friendUserId=${friend.userId}`,{friendUserId: friend.userId})
                 console.log(stealGold)
                 console.log(`获得：调料包 * ${stealGold.data}`)
-                let checkUserCapCode = await commonPost(`/checkUserCapCode`,{"xpos":239})
-                console.log(checkUserCapCode)
+                //let checkUserCapCode = await commonPost(`/checkUserCapCode`,{"xpos":239})
+                //console.log(checkUserCapCode)
             } else {
                 console.log(visit)
             }

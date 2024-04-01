@@ -293,7 +293,7 @@ function getSign(params = {}, body = null, client_id = "game") {
     let signString = Object.values(signObject).join("|");
     return {
         "client_id": client_id,
-        "timestamp": signObject.timestamp,
+        "timestamp": (signObject.timestamp).toString(),
         "nonstr": signObject.nonstr,
         "sign": md5Hash(signString).toString().toUpperCase(),
     };

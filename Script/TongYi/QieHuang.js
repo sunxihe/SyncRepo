@@ -18,16 +18,24 @@ async function main() {
         wid = item.wid;
         thirdId = item.thirdId;
         //登录
-        let userInfo = await commonPost("/public/api/login", item)
-        console.log(`用户：${wid} 登录成功 token = ${userInfo.data.token}`)
-        token = userInfo.data.token;
+        let loginInfo = await commonPost("/public/api/login", item)
+        console.log(`用户：${wid} 登录成功 token = ${loginInfo.data.token}`)
+        token = loginInfo.data.token;
+        console.log("获取库存信息")
+        let userInfo = await commonGet("/userInfo/get")
+        console.log(`调料包：${userInfo.data.gold} 番茄：${userInfo.data.score} 阳光：${userInfo.data.sun}`)
         //助力
         console.log("开始每日任务助力")
         for (const helpUser of helpTask) {
-            //if (helpUser == userInfo.data.userId) continue
+            if (helpUser == userInfo.data.userId) {
+                continue
+            }
             let randomId = randomString(32,'0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM');
             let help = await commonGet(`/friend-help/help?userId=${helpUser}&type=0&randomId=${randomId}`, {userId: helpUser, type: 0, randomId: randomId})
             console.log(help)
+            if (help.message.includes("超出今日助力次数")) {
+                break
+            }
         }
         console.log("————————————")
         console.log("开始收集阳光")
@@ -39,6 +47,10 @@ async function main() {
         for (const land of getLand.data.gaUserLandList) {
             if (land.status === 0) {
                 console.log(`第${land.no}块地：未解锁`)
+                if (land.unlockGold > userInfo.data.gold) {
+                    console.log(`解锁需要：${land.unlockGold} 调料包不足`)
+                    continue
+                }
                 //解锁
                 let unlock = await commonGet(`/user-land/unlock`)
                 if (unlock.code == 0) {
@@ -90,6 +102,9 @@ async function main() {
         let taskList = await commonGet("/task/get")
         for (const task of taskList.data) {
             console.log(`任务：${task.title} 任务id：${task.id}`)
+            if (task.id == 1774981474401030144) {
+                continue
+            }
             if (task.status === 0) {
                 console.log("去做任务")
                 let doTask = await commonGet(`/task/doTask?id=${task.id}`, {id: task.id})
@@ -133,6 +148,10 @@ async function main() {
         for (const role of getRole.data.roleList) {
             if (role.status === 0) {
                 console.log(`角色：${role.name} 未解锁`)
+                if (role.unlockNum > userInfo.data.gold) {
+                    console.log(`解锁需要：${role.unlockNum} 调料包不足`)
+                    continue
+                }
                 //解锁
                 if (role.roleId == 10003) {
                     console.log(`解锁角色助力码：${role.id}`)
@@ -189,34 +208,42 @@ async function main() {
         //拜访
         console.log("————————————")
         console.log("拜访")
-        //添加朋友
-        for (const helpUser of helpTask) {
-            let addShareFriend = await commonGet(`/friend/addShareFriend?friendUserId=${helpUser}`,{friendUserId: helpUser})
-            console.log(addShareFriend)
-        }
         //获取朋友列表
         let findFriend = await commonGet("/friend/findFriend")
-        for (const friend of findFriend.data.friendList) {
-            //拜访
-            if (!friend.stealFlag) {
-                continue
+        //添加朋友
+        for (const helpUser of helpTask) {
+            if (!findFriend.data.friendList.find(item => item.userId == helpUser)) {
+                let addShareFriend = await commonGet(`/friend/addShareFriend?friendUserId=${helpUser}`,{friendUserId: helpUser})
+                console.log(addShareFriend)
             }
-            console.log(`拜访朋友：${friend.userId}`)
-            let visit = await commonGet(`/user-land/getByUserId?userId=${friend.userId}`,{userId: friend.userId})
-            if (visit.code == 0) {
-                console.log(`拜访成功`)
-                // let stealGold = await commonGet(`/friend/stealGold?friendUserId=${friend.userId}`,{friendUserId: friend.userId})
-                // if (stealGold.code == 4000) {
-                //     console.log("验证失败导致部分功能暂时用不了")
-                //     break
-                // }
-                // console.log(stealGold)
-                // console.log(`获得：调料包 * ${stealGold.data}`)
-                //let checkUserCapCode = await commonPost(`/checkUserCapCode`,{"xpos":239})
-                //console.log(checkUserCapCode)
-            } else {
-                console.log(visit)
-            }
+        }
+        // for (const friend of findFriend.data.friendList) {
+        //     //拜访
+        //     if (!friend.stealFlag) {
+        //         continue
+        //     }
+        //     console.log(`拜访朋友：${friend.userId}`)
+        //     let visit = await commonGet(`/user-land/getByUserId?userId=${friend.userId}`,{userId: friend.userId})
+        //     if (visit.code == 0) {
+        //         console.log(`拜访成功`)
+        //         let stealGold = await commonGet(`/friend/stealGold?friendUserId=${friend.userId}`,{friendUserId: friend.userId})
+        //         if (stealGold.code == 4000) {
+        //             console.log("验证失败导致部分功能暂时用不了")
+        //             break
+        //         }
+        //         console.log(stealGold)
+        //         console.log(`获得：调料包 * ${stealGold.data}`)
+        //         let checkUserCapCode = await commonPost(`/checkUserCapCode`,{"xpos":239})
+        //         console.log(checkUserCapCode)
+        //     } else {
+        //         console.log(visit)
+        //     }
+        // }
+        console.log("————————————")
+        console.log("幸运抽奖")
+        let activity = await commonGet("/activity/find?type=1", {type: 1})
+        for (const prize of activity.data.lotteryPrizeConfigList) {
+            console.log(`礼品：${prize.name} 库存：[${prize.usableStock}/${prize.stock}]`)
         }
         console.log("————————————")
         console.log("获取库存信息")

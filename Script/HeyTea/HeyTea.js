@@ -1,6 +1,5 @@
 const $ = new Env('喜茶');
 const HeyTea = ($.isNode() ? process.env.HeyTea : $.getjson("HeyTea")) || [];
-let authorizationArr = ["Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1Nzc1MjY3MyIsInVzZXJfbWFpbl9pZCI6NzEzMzg3MTUsImNoYW5uZWwiOiJXIiwic291cmNlIjoiYXBpIiwiaXNfZ3Vlc3QiOmZhbHNlLCJsYWJlbCI6ImNsaWVudDp3ZWFwcCIsImlhdCI6MTcxMjAzMDc4MCwibmJmIjoxNzEyMDMwNzgwLCJleHAiOjE3MTIxMTcxODAsImlzcyI6ImhleXRlYSJ9.gyF_3tZpsHiWeVMOHEFND0_LHEFMJvJpWU11FXLlHd0"]
 !(async () => {
     if (typeof $request != "undefined") {
         await getCookie();
@@ -10,12 +9,12 @@ let authorizationArr = ["Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI
 })().catch((e) => {$.log(e)}).finally(() => {$.done({});});
 
 async function main() {
-    for (const authorization of authorizationArr) {
+    for (const account of HeyTea) {
         headers = {
             'x-version': '5.1.30',
                 'accept-encoding': 'Gzip',
                 'accept-language': 'zh-CN',
-                'authorization': authorization,
+                'authorization': account.authorization,
                 'client': '1',
                 'x-client': 'weapp',
                 'x-region-id': '10',
@@ -33,7 +32,7 @@ async function main() {
                 'sec-fetch-dest': 'empty',
                 'referer': 'https://servicewechat.com/wx696a42df4f2456d3/1012/page-frame.html',
         }
-        console.log(`用户：开始任务`)
+        console.log(`用户：${account.userId}开始任务`)
         //签到
         console.log("开始签到")
         let sign = await commonPost("/award/114")
@@ -42,7 +41,7 @@ async function main() {
         //查询积分
         let info = await commonGet("/member")
         console.log(`拥有积分: ${info.data.usableScore}`)
-        $.msg($.name, `用户：`, `拥有积分: ${info.data.usableScore}`);
+        $.msg($.name, `用户：${account.userId}`, `拥有积分: ${info.data.usableScore}`);
     }
 }
 

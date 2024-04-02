@@ -102,7 +102,7 @@ async function main() {
         let taskList = await commonGet("/task/get")
         for (const task of taskList.data) {
             console.log(`任务：${task.title} 任务id：${task.id}`)
-            if (task.id == 1774981474401030144) {
+            if (task.taskId ==2 || task.taskId == 3) {
                 continue
             }
             if (task.status === 0) {
@@ -212,6 +212,9 @@ async function main() {
         let findFriend = await commonGet("/friend/findFriend")
         //添加朋友
         for (const helpUser of helpTask) {
+            if (helpUser == userInfo.data.userId) {
+                continue
+            }
             if (!findFriend.data.friendList.find(item => item.userId == helpUser)) {
                 let addShareFriend = await commonGet(`/friend/addShareFriend?friendUserId=${helpUser}`,{friendUserId: helpUser})
                 console.log(addShareFriend)

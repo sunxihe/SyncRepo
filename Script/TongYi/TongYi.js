@@ -18,6 +18,10 @@ async function main() {
         //签到
         console.log("开始签到")
         let signMainInfo = await commonPost("/onecrm/mactivity/sign/misc/sign/activity/c/signMainInfo",{"appid":"wx532ecb3bdaaf92f9","basicInfo":{"vid":6013753979957,"vidType":2,"bosId":4020112618957,"productId":146,"productInstanceId":3168798957,"productVersionId":"14026","merchantId":2000020692957,"tcode":"weimob","cid":176205957},"extendInfo":{"wxTemplateId":7526,"childTemplateIds":[{"customId":90004,"version":"crm@0.1.11"},{"customId":90002,"version":"ec@42.3"},{"customId":90006,"version":"hudong@0.0.201"},{"customId":90008,"version":"cms@0.0.419"}],"analysis":[],"quickdeliver":{"enable":false},"bosTemplateId":1000001420,"youshu":{"enable":false},"source":1,"channelsource":5,"refer":"onecrm-signgift","mpScene":1089},"queryParameter":{"tracePromotionId":"100039234","tracepromotionid":"100039234"},"i18n":{"language":"zh","timezone":"8"},"pid":"4020112618957","storeId":"0","customInfo":{"source":0,"wid":11068728376},"tracePromotionId":"100039234","tracepromotionid":"100039234"})
+        if (signMainInfo.errcode == 1041) {
+            $.msg($.name, `用户：${memberId}`, `token已过期，请重新获取`);
+            continue
+        }
         if (signMainInfo.data.hasSign) {
             console.log("已签到")
         } else {

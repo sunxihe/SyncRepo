@@ -17,6 +17,10 @@ async function main() {
         console.log("开始每日登录奖励")
         console.log("——————")
         let login = await commonPost("/login/info", {"belongToId":1,"memberId":memberId});
+        if (!(login.code && login.code == 200)) {
+            $.msg($.name, `用户：${memberId}`, `token已过期，请重新获取`);
+            continue
+        }
         console.log(login.chnDesc)
         await $.wait(5000);
         //签到

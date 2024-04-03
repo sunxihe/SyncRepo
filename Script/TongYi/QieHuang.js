@@ -183,6 +183,10 @@ async function main() {
                     console.log("验证失败导致部分功能暂时用不了")
                     break
                 }
+                if (go.code == 1000) {
+                    console.log("冒险暂停中")
+                    break
+                }
                 if (go.data.eventId == 101) {
                     for (const answer of go.data.gameMapEvent.gameMapEventAnswerList) {
                         console.log(`获得：${answer.dropReward.name} * ${answer.dropReward.finalNum}`)

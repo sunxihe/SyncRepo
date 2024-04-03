@@ -206,6 +206,11 @@ async function main() {
                     console.log(`选择:${jsonId}`)
                     let up = await commonGet(`/common/take-risk/up?jsonId=${jsonId}`,{jsonId: jsonId})
                     console.log(up)
+                    for (const answer of up.data.gameMapEvent.gameMapEventAnswerList) {
+                        if (answer.jsonId == jsonId) {
+                            console.log(`获得：${answer.dropReward.name} * ${answer.dropReward.finalNum}`)
+                        }
+                    }
                 } else {
                     console.log(go.data.eventId)
                     console.log(go.data.gameMapEvent.gameMapEventAnswerList)

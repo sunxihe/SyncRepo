@@ -24,6 +24,9 @@ async function main() {
         console.log("获取库存信息")
         let userInfo = await commonGet("/userInfo/get")
         console.log(`调料包：${userInfo.data.gold} 番茄：${userInfo.data.score} 阳光：${userInfo.data.sun}`)
+        //伴手礼
+        let gift = await commonGet("/user-role/reward")
+        console.log(gift)
         //助力
         console.log("开始每日任务助力")
         for (const helpUser of helpTask) {

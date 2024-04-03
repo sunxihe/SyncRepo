@@ -102,10 +102,10 @@ async function main() {
         let taskList = await commonGet("/task/get")
         for (const task of taskList.data) {
             console.log(`任务：${task.title} 任务id：${task.id}`)
-            if (task.taskId ==2 || task.taskId == 3) {
-                continue
-            }
             if (task.status === 0) {
+                if (task.taskId ==2 || task.taskId == 3) {
+                    continue
+                }
                 console.log("去做任务")
                 let doTask = await commonGet(`/task/doTask?id=${task.id}`, {id: task.id})
                 if (doTask.code == 0) {
@@ -183,8 +183,6 @@ async function main() {
                     console.log("验证失败导致部分功能暂时用不了")
                     break
                 }
-                let finish = go.data.current - getCurrent.data.current;
-                console.log(`走了${finish}步`)
                 if (go.data.eventId == 101) {
                     for (const answer of go.data.gameMapEvent.gameMapEventAnswerList) {
                         console.log(`获得：${answer.dropReward.name} * ${answer.dropReward.finalNum}`)
@@ -192,11 +190,13 @@ async function main() {
                 } else if (go.data.eventId == 102) {
                     let jsonId = '',minNum = 0;
                     for (const answer of go.data.gameMapEvent.gameMapEventAnswerList) {
-                        if (minNum <= answer.dropReward.minNum) {
+                        console.log(`jsonId:${answer.jsonId} - ${answer.eventAnswer} 获得：${answer.dropReward.name} * ${answer.dropReward.minNum}`)
+                        if (answer.dropReward.name == '调料包' && minNum <= answer.dropReward.minNum) {
                             minNum = answer.dropReward.minNum;
                             jsonId = answer.jsonId;
                         }
                     }
+                    console.log(`选择:${jsonId}`)
                     let up = await commonGet(`/common/take-risk/up?jsonId=${jsonId}`,{jsonId: jsonId})
                     console.log(up)
                 } else {

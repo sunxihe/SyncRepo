@@ -19,14 +19,130 @@ async function main() {
         thirdId = item.thirdId;
         //登录
         let loginInfo = await commonPost("/public/api/login", item)
-        console.log(`用户：${wid} 登录成功 token = ${loginInfo.data.token}`)
+        console.log(`用户：${wid} 登录成功！`)
         token = loginInfo.data.token;
         console.log("获取库存信息")
         let userInfo = await commonGet("/userInfo/get")
         console.log(`调料包：${userInfo.data.gold} 番茄：${userInfo.data.score} 阳光：${userInfo.data.sun}`)
         //伴手礼
+        console.log("————————————")
+        console.log("开始领取伴手礼")
         let gift = await commonGet("/user-role/reward")
-        console.log(gift)
+        if (gift.code == 0) {
+            console.log(`获得：${gift.data.name}`)
+        } else {
+            console.log(gift.message)
+        }
+        //收集阳光
+        console.log("————————————")
+        console.log("开始收集阳光")
+        let autoSun = await commonGet("/userInfo/autoSun")
+        console.log(`获得阳光：${autoSun.data.sun}`)
+        //种植番茄
+        console.log("————————————")
+        console.log("开始种植番茄")
+        let getLand = await commonGet("/user-land/get")
+        for (const land of getLand.data.gaUserLandList) {
+            if (land.status === 0) {
+                console.log(`第${land.no}块地：未解锁`)
+                if (land.unlockGold > userInfo.data.gold) {
+                    console.log(`解锁需要：${land.unlockGold} 调料包不足`)
+                    continue
+                }
+                //解锁
+                console.log(`开始解锁土地`)
+                let unlock = await commonGet(`/user-land/unlock`)
+                if (unlock.code == 0) {
+                    console.log(`解锁成功`)
+                    //种植番茄
+                    console.log(`开始种植番茄`)
+                    let sow = await commonGet(`/user-land/sow?no=${land.no}`, {no: land.no})
+                    if (sow.code == 0) {
+                        console.log(`种植成功`)
+                    } else {
+                        console.log(sow)
+                    }
+                    //消耗阳光
+                    console.log(`开始挥洒阳光`)
+                    let sun = await commonGet(`/user-land/sun?no=${land.no}`,{no:land.no})
+                    if (sun.code == 0) {
+                        console.log(`消耗阳光：${land.needSun}`)
+                    } else {
+                        console.log(sun.message)
+                    }
+                } else {
+                    console.log(unlock)
+                }
+            } else {
+                console.log(`第${land.no}块地：已解锁 阶段：${step[land.step]}（${land.sumSunCount-land.leftSunCount}/${land.sumSunCount}）`)
+                if (land.step == 0) {
+                    //种植番茄
+                    console.log(`开始种植番茄`)
+                    let sow = await commonGet(`/user-land/sow?no=${land.no}`, {no: land.no})
+                    if (sow.code == 0) {
+                        console.log(`种植成功`)
+                    } else {
+                        console.log(sow)
+                    }
+                }
+                //消耗阳光
+                console.log(`开始挥洒阳光`)
+                let sun = await commonGet(`/user-land/sun?no=${land.no}`,{no:land.no})
+                if (sun.code == 0) {
+                    console.log(`消耗阳光：${land.needSun}`)
+                } else {
+                    console.log(sun.message)
+                }
+                //升级
+                if (land.leftSunCount == 0) {
+                    console.log(`开始升级`)
+                    let level = await commonGet(`/user-land/level?no=${land.no}`,{no:land.no})
+                    console.log(level)
+                }
+            }
+        }
+        //做任务
+        console.log("————————————")
+        console.log("开始做任务")
+        let taskList = await commonGet("/task/get")
+        for (const task of taskList.data) {
+            console.log(`任务：${task.title} 任务id：${task.id}`)
+            if (task.status === 0) {
+                if (task.taskId == 3) {
+                    continue
+                }
+                console.log("去做任务")
+                let doTask = await commonGet(`/task/doTask?id=${task.id}`, {id: task.id})
+                if (doTask.code == 0) {
+                    console.log(`任务成功`)
+                    console.log("开始领取奖励")
+                    let reward = await commonGet(`/task/reward?id=${task.id}`, {id: task.id})
+                    if (reward.code == 0) {
+                        for (const prize of task.prizeList) {
+                            let name = prizeType.find(item => prize.type in item)[prize.type];
+                            console.log(`获得${name} * ${prize.num}`)
+                        }
+                    } else {
+                        console.log(reward.message)
+                    }
+                } else {
+                    console.log(doTask)
+                }
+            } else if (task.status === 2) {
+                console.log("任务已完成")
+            } else {
+                console.log("开始领取奖励")
+                let reward = await commonGet(`/task/reward?id=${task.id}`, {id: task.id})
+                if (reward.code == 0) {
+                    for (const prize of task.prizeList) {
+                        let name = prizeType.find(item => prize.type in item)[prize.type];
+                        console.log(`获得${name} * ${prize.num}`)
+                    }
+                } else {
+                    console.log(reward)
+                }
+            }
+        }
         //助力
         console.log("开始每日任务助力")
         for (const helpUser of helpTask) {
@@ -41,112 +157,19 @@ async function main() {
             }
         }
         console.log("————————————")
-        console.log("开始收集阳光")
-        let autoSun = await commonGet("/userInfo/autoSun")
-        console.log(`获得阳光：${autoSun.data.sun}`)
-        console.log("————————————")
-        console.log("开始种植番茄")
-        let getLand = await commonGet("/user-land/get")
-        for (const land of getLand.data.gaUserLandList) {
-            if (land.status === 0) {
-                console.log(`第${land.no}块地：未解锁`)
-                if (land.unlockGold > userInfo.data.gold) {
-                    console.log(`解锁需要：${land.unlockGold} 调料包不足`)
-                    continue
-                }
-                //解锁
-                let unlock = await commonGet(`/user-land/unlock`)
-                if (unlock.code == 0) {
-                    console.log(`解锁成功`)
-                    //种植番茄
-                    let sow = await commonGet(`/user-land/sow?no=${land.no}`, {no: land.no})
-                    if (sow.code == 0) {
-                        console.log(`种植成功`)
-                    } else {
-                        console.log(sow)
-                    }
-                    //消耗阳光
-                    let sun = await commonGet(`/user-land/sun?no=${land.no}`,{no:land.no})
-                    if (sun.code == 0) {
-                        console.log(`消耗阳光：${land.needSun}`)
-                    } else {
-                        console.log(sun)
-                    }
-                } else {
-                    console.log(unlock)
-                }
-            } else {
-                console.log(`第${land.no}块地：已解锁 阶段：${step[land.step]}（${land.sumSunCount-land.leftSunCount}/${land.sumSunCount}）`)
-                if (land.step == 0) {
-                    //种植番茄
-                    let sow = await commonGet(`/user-land/sow?no=${land.no}`, {no: land.no})
-                    if (sow.code == 0) {
-                        console.log(`种植成功`)
-                    } else {
-                        console.log(sow)
-                    }
-                }
-                //消耗阳光
-                let sun = await commonGet(`/user-land/sun?no=${land.no}`,{no:land.no})
-                if (sun.code == 0) {
-                    console.log(`消耗阳光：${land.needSun}`)
-                } else {
-                    console.log(sun)
-                }
-                //升级
-                if (land.leftSunCount == 0) {
-                    let level = await commonGet(`/user-land/level?no=${land.no}`,{no:land.no})
-                    console.log(level)
-                }
-            }
-        }
-        console.log("————————————")
-        console.log("开始做任务")
-        let taskList = await commonGet("/task/get")
-        for (const task of taskList.data) {
-            console.log(`任务：${task.title} 任务id：${task.id}`)
-            if (task.status === 0) {
-                if (task.taskId ==2 || task.taskId == 3) {
-                    continue
-                }
-                console.log("去做任务")
-                let doTask = await commonGet(`/task/doTask?id=${task.id}`, {id: task.id})
-                if (doTask.code == 0) {
-                    console.log(`任务成功`)
-                    let reward = await commonGet(`/task/reward?id=${task.id}`, {id: task.id})
-                    if (reward.code == 0) {
-                        for (const prize of task.prizeList) {
-                            let name = prizeType.find(item => prize.type in item)[prize.type];
-                            console.log(`获得${name} * ${prize.num}`)
-                        }
-                    } else {
-                        console.log(reward)
-                    }
-                } else {
-                    console.log(doTask)
-                }
-            } else if (task.status === 2) {
-                console.log("任务已完成")
-            } else {
-                let reward = await commonGet(`/task/reward?id=${task.id}`, {id: task.id})
-                if (reward.code == 0) {
-                    for (const prize of task.prizeList) {
-                        let name = prizeType.find(item => prize.type in item)[prize.type];
-                        console.log(`获得${name} * ${prize.num}`)
-                    }
-                } else {
-                    console.log(reward)
-                }
-            }
-        }
-        console.log("————————————")
         console.log("去旅行")
         //在线奖励
+        console.log("开始领取在线奖励")
         let online = await commonGet("/take-risk/online")
         console.log(online)
         let reward = await commonGet("/take-risk/reward")
-        console.log(reward)
+        if (reward.code == 0) {
+            console.log(`获得：烤包子 * ${reward.data.num}`)
+        } else {
+            console.log(reward.message)
+        }
         //获取角色
+        console.log("开始获取角色")
         let getRole = await commonGet("/user-role/get")
         for (const role of getRole.data.roleList) {
             if (role.status === 0) {
@@ -158,12 +181,6 @@ async function main() {
                 //解锁
                 if (role.roleId == 10003) {
                     console.log(`解锁角色助力码：${role.id}`)
-                    // 助力角色
-                    console.log("开始助力解锁角色")
-                    for (const helpRoleItem of helpRole) {
-                        let helpRoleData = await commonGet(`/user-role/friendHelpUnlock?userRoleId=${helpRoleItem}`,{userRoleId:helpRoleItem})
-                        console.log(helpRoleData)
-                    }
                 } else {
                     let unlockRole = await commonGet(`/user-role/goldUnlock?roleId=${role.roleId}`, {roleId: role.roleId})
                     if (unlockRole.code == 0) {
@@ -176,7 +193,18 @@ async function main() {
                 console.log(`角色：${role.name} 已解锁`)
             }
         }
+        // 助力角色
+        console.log("开始助力解锁角色")
+        for (const helpRoleItem of helpRole) {
+            let helpRoleData = await commonGet(`/user-role/friendHelpUnlock?userRoleId=${helpRoleItem}`,{userRoleId:helpRoleItem})
+            if (helpRoleData.data) {
+                console.log(`助力成功`)
+            } else {
+                console.log(helpRoleData.message)
+            }
+        }
         //获取当前信息
+        console.log("开始旅行-go")
         let getCurrent = await commonGet("/common/take-risk/get")
         if (getCurrent.data.num > 0) {
             for (let i = 0; i < getCurrent.data.num; i++) {
@@ -195,6 +223,7 @@ async function main() {
                         console.log(`获得：${answer.dropReward.name} * ${answer.dropReward.finalNum}`)
                     }
                 } else if (go.data.eventId == 102) {
+                    console.log("触发随机事件")
                     let jsonId = '',minNum = 0;
                     for (const answer of go.data.gameMapEvent.gameMapEventAnswerList) {
                         console.log(`jsonId:${answer.jsonId} - ${answer.eventAnswer} 获得：${answer.dropReward.name} * ${answer.dropReward.minNum}`)
@@ -203,9 +232,8 @@ async function main() {
                             jsonId = answer.jsonId;
                         }
                     }
-                    console.log(`选择:${jsonId}`)
+                    console.log(`选择事件:${jsonId}`)
                     let up = await commonGet(`/common/take-risk/up?jsonId=${jsonId}`,{jsonId: jsonId})
-                    console.log(up)
                     for (const answer of up.data.gameMapEvent.gameMapEventAnswerList) {
                         if (answer.jsonId == jsonId) {
                             console.log(`获得：${answer.dropReward.name} * ${answer.dropReward.finalNum}`)
@@ -223,6 +251,7 @@ async function main() {
         //获取朋友列表
         let findFriend = await commonGet("/friend/findFriend")
         //添加朋友
+        console.log("开始添加朋友")
         for (const helpUser of helpTask) {
             if (helpUser == userInfo.data.userId) {
                 continue
@@ -255,7 +284,7 @@ async function main() {
         //     }
         // }
         console.log("————————————")
-        console.log("幸运抽奖")
+        console.log("开始幸运抽奖")
         let activity = await commonGet("/activity/find?type=1", {type: 1})
         for (const prize of activity.data.lotteryPrizeConfigList) {
             console.log(`礼品：${prize.name} 库存：[${prize.usableStock}/${prize.stock}]`)

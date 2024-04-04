@@ -151,7 +151,11 @@ async function main() {
             }
             let randomId = randomString(32,'0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM');
             let help = await commonGet(`/friend-help/help?userId=${helpUser}&type=0&randomId=${randomId}`, {userId: helpUser, type: 0, randomId: randomId})
-            console.log(help)
+            if (help.data) {
+                console.log(`助力成功`)
+            } else {
+                console.log(help.message)
+            }
             if (help.message && help.message.includes("超出今日助力次数")) {
                 break
             }

@@ -243,6 +243,9 @@ async function main() {
                             console.log(`获得：${answer.dropReward.name} * ${answer.dropReward.finalNum}`)
                         }
                     }
+                } else if (go.data.eventId == 216) {
+                    console.log("获得旅行手册")
+                    console.log(go.data.gameMapEvent.gameMapEventAnswerList)
                 } else {
                     console.log(go.data.eventId)
                     console.log(go.data.gameMapEvent.gameMapEventAnswerList)

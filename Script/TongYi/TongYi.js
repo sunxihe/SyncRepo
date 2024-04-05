@@ -37,7 +37,13 @@ async function main() {
             if (item.link.h5Url) {
                 console.log(`活动：${item.link.linkName}`)
                 const urlStr = item.link.h5Url.split('?')[1];
-                const result = Object.fromEntries(new URLSearchParams(urlStr).entries())
+                let result = {};
+                let paramsArr = urlStr.split('&')
+                for(let i = 0,len = paramsArr.length;i < len;i++){
+                    let arr = paramsArr[i].split('=')
+                    result[arr[0]] = arr[1];
+                }
+                //const result = Object.fromEntries(new URLSearchParams(urlStr).entries())
                 let activityId = result.activityId;
                 if (result.templateKey) {
                     console.log(`活动id：${activityId} 活动类型：抽奖`)

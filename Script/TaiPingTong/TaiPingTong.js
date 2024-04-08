@@ -83,6 +83,7 @@ async function getCookie() {
         console.log(newData.token)
         $.msg($.name, `🎉新增用户${newData.userId}成功!`, ``);
     }
+    $.setjson(TaiPingTong, "TaiPingTong");
 }
 
 async function commonPost(url,body = {}) {

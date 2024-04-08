@@ -42,7 +42,7 @@ async function main() {
         console.log("开始做任务")
         let taskList = await commonPost('/campaignsms/goldParty/task/list',{"activityNumber":"goldCoinParty","rewardFlag":"1","openMsgRemind":1});
         for (const task of taskList.data.taskList) {
-            console.log(`任务：${task.name}`);
+            console.log(`任务：${task.name} id：${task.taskId}`)
             if (task.taskStatus == 1) {
                 console.log("领取任务奖励");
                 let taskReward = await commonPost('/campaignsms/goldParty/goldCoin/add',{"taskIds":[task.taskId]});
@@ -51,7 +51,7 @@ async function main() {
                 console.log("任务已完成");
             } else {
                 console.log("开始任务");
-                let finish = await commonPost('/campaignsms/goldParty/task/finish',{"taskId":task.taskId});
+                let finish = await commonPost('/campaignsms/goldParty/task/finish',{"taskId":[task.taskId]});
                 console.log(finish);
                 console.log("领取任务奖励");
                 let taskReward = await commonPost('/campaignsms/goldParty/goldCoin/add',{"taskIds":[task.taskId]});

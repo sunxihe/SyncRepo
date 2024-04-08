@@ -11,19 +11,49 @@ async function main() {
         console.log(`用户：${userId}开始任务`)
         let home = await commonGet('/user/home');
         console.log(home)
-        if (home.data.check_user_can_open_box) {
-            let openBox = await commonPost('/user/open-welfare_box');
+        if (home.data.can_lottery) {
+            let openBox = await commonPost('/user/open-welfare_box',{"w_id":home.data.lottery_info.w_id});
             console.log(openBox)
         }
         let taskList = await commonGet('/task/list');
         for (let task of taskList.data.taskList) {
             console.log(`任务：${task.title} id：${task.id}`);
-            let water = await commonPost('/task/complete-newcomer-water',{"tid":task.id});
-            console.log(water)
-            let completeTask = await commonPost('/task/complete-task',{"type":task.type});
-            console.log(completeTask)
-            let completeLinkTask = await commonPost('/task/complete-link-task',{"tid":task.id});
-            console.log(completeLinkTask)
+            //初次种植
+            if (task.id == 1) {
+                let water = await commonPost('/task/complete-newcomer-water',{"tid":task.id});
+                if (water.code == 200) {
+                    console.log(`获得：水*${water.data.water}`)
+                } else {
+                    console.log(water.msg)
+                }
+            }
+            //每月登录奖励
+            if (task.id == 14) {
+                let completeTask = await commonPost('/task/complete-task',{"type":task.type});
+                if (completeTask.code == 200) {
+                    console.log(`获得：水*${completeTask.data.water}`)
+                } else {
+                    console.log(completeTask.msg)
+                }
+            }
+            //查保单领水滴
+            if (task.id == 15) {
+                let completeLinkTask = await commonPost('/task/complete-link-task',{"tid":task.id});
+                if (completeLinkTask.code == 200) {
+                    console.log(`获得：水*${completeLinkTask.data.water}`)
+                } else {
+                    console.log(completeLinkTask.msg)
+                }
+            }
+            //三餐福袋
+            if (task.id == 3) {
+                let completeRedEnvelope = await commonPost('/task/complete-red-envelope',{"tid":task.id});
+                if (completeRedEnvelope.code == 200) {
+                    console.log(`获得：水*${completeRedEnvelope.data.water}`)
+                } else {
+                    console.log(completeRedEnvelope.msg)
+                }
+            }
         }
         console.log("开始浇水")
         let sy_water = home.data.water;
@@ -31,6 +61,10 @@ async function main() {
             console.log(`剩余水滴：${sy_water}`)
             let water = await commonPost('/tree/watering',{"tree_user_id":home.data.tree_user.id});
             //console.log(water)
+            if (water.code == 400) {
+                console.log(water.msg)
+                break;
+            }
             sy_water = water.data.sy_water;
             if (water.data.is_upgrade_reward) {
                 let upgrade = await commonPost('/tree/receive-upgrade-reward',{"reward_id":water.data.upgrade_reward_id});

@@ -64,7 +64,7 @@ async function getCookie() {
     if (!token) {
         return
     }
-    const body = $.toObj($request.body);
+    const body = $.toObj($response.body);
     if (!body.data || !body.data.userId) {
         return
     }

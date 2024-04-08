@@ -16,17 +16,21 @@ async function main() {
         //签到
         console.log("开始签到")
         let sign = await commonPost('/campaignsms/couponAndsign');
-        if (sign.code == "TPGW0001SY0013") {
+        if (sign.code != "0000") {
             console.log(sign.desc)
             continue
         }
         console.log(sign);
         //领金币
+        console.log("————————————")
+        console.log("开始领金币")
         let queryList = await commonPost('/campaignsms/coinBubble/queryList');
         console.log(queryList);
         let getAllCoins = await commonPost('/campaignsms/coinBubble/getAllCoins');
         console.log(getAllCoins);
         //话题PK
+        console.log("————————————")
+        console.log("开始话题PK")
         let latestTopTopic = await commonGet('/campaignsms/tPkTopicAppointment/latestTopTopic');
         if (latestTopTopic.data.length > 0 && latestTopTopic.data[0].isParticipateIn != 1) {
             let standInLineTopic = await commonPost('/campaignsms/tPkTopicAppointment/standInLineTopic',{"joinPoint":latestTopTopic.data[0].joinWin,"id":latestTopTopic.data[0].id,"dataFrom":0});
@@ -34,6 +38,8 @@ async function main() {
             console.log(standInLineTopic.data.topicCoin)
         }
         //做任务
+        console.log("————————————")
+        console.log("开始做任务")
         let taskList = await commonPost('/campaignsms/goldParty/task/list',{"activityNumber":"goldCoinParty","rewardFlag":"1","openMsgRemind":1});
         for (const task of taskList.data.taskList) {
             console.log(`任务：${task.name}`);
@@ -52,6 +58,19 @@ async function main() {
                 console.log(taskReward);
             }
         }
+        //阅读文章
+        console.log("————————————")
+        console.log("开始阅读")
+        let informationms = await commonPost("/informationms/app/config/get/1",{"city":"1","pageSize":10,"type":"GENERAL_PLUGIN","trackDesc":"赚金币任务","plugInId":"701b3099297148a8ba979ad9c982b561"})
+        for (const item of informationms.data) {
+            console.log(`文章：${item.cell[0][0].title}`)
+            let articleId = item.cell[0][0].contentId;
+            let read = await commonPost('/informationms/app/v2/read/gold',{"articleId":articleId,"source":"TPT"});
+            console.log(read);
+        }
+        //金币查询
+        console.log("————————————")
+        console.log("金币查询")
         let total = await commonPost('/campaignsms/couponAndsign');
         console.log(`拥有金币: ${total.data.dailySignRsp.integral}`)
         $.msg($.name, `用户：${userId}`, `拥有金币: ${total.data.dailySignRsp.integral}`);

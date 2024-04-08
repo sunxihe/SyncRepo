@@ -1,11 +1,7 @@
-const $ = new Env("太平通");
+const $ = new Env("太平通-种树");
 let TaiPingTong = ($.isNode() ? process.env.TaiPingTong : $.getjson("TaiPingTong")) || [];
 !(async () => {
-    if (typeof $request != "undefined") {
-        await getCookie();
-    } else {
-        await main();
-    }
+    await main();
 })().catch((e) => {$.log(e)}).finally(() => {$.done({});});
 
 async function main() {
@@ -13,98 +9,62 @@ async function main() {
         token = item.token;
         userId = item.userId;
         console.log(`用户：${userId}开始任务`)
-        //签到
-        console.log("开始签到")
-        let sign = await commonPost('/campaignsms/couponAndsign');
-        if (sign.code == "TPGW0001SY0013") {
-            console.log(sign.desc)
-            continue
+        let home = await commonGet('/user/home');
+        console.log(home)
+        if (home.data.check_user_can_open_box) {
+            let openBox = await commonPost('/user/open-welfare_box');
+            console.log(openBox)
         }
-        console.log(sign);
-        //领金币
-        let queryList = await commonPost('/campaignsms/coinBubble/queryList');
-        console.log(queryList);
-        let getAllCoins = await commonPost('/campaignsms/coinBubble/getAllCoins');
-        console.log(getAllCoins);
-        //话题PK
-        let latestTopTopic = await commonGet('/campaignsms/tPkTopicAppointment/latestTopTopic');
-        if (latestTopTopic.data.length > 0 && latestTopTopic.data[0].isParticipateIn != 1) {
-            let standInLineTopic = await commonPost('/campaignsms/tPkTopicAppointment/standInLineTopic',{"joinPoint":latestTopTopic.data[0].joinWin,"id":latestTopTopic.data[0].id,"dataFrom":0});
-            console.log(standInLineTopic);
-            console.log(standInLineTopic.data.topicCoin)
+        let taskList = await commonGet('/task/list');
+        for (let task of taskList.data.taskList) {
+            console.log(`任务：${task.title} id：${task.id}`);
+            let water = await commonPost('/task/complete-newcomer-water',{"tid":task.id});
+            console.log(water)
+            let completeTask = await commonPost('/task/complete-task',{"type":task.type});
+            console.log(completeTask)
+            let completeLinkTask = await commonPost('/task/complete-link-task',{"tid":task.id});
+            console.log(completeLinkTask)
         }
-        //做任务
-        let taskList = await commonPost('/campaignsms/goldParty/task/list',{"activityNumber":"goldCoinParty","rewardFlag":"1","openMsgRemind":1});
-        for (const task of taskList.data.taskList) {
-            console.log(`任务：${task.name}`);
-            if (task.taskStatus == 1) {
-                console.log("领取任务奖励");
-                let taskReward = await commonPost('/campaignsms/goldParty/goldCoin/add',{"taskIds":[task.taskId]});
-                console.log(taskReward);
-            } else if (task.taskStatus == 2) {
-                console.log("任务已完成");
-            } else {
-                console.log("开始任务");
-                let finish = await commonPost('/campaignsms/goldParty/task/finish',{"taskId":task.taskId});
-                console.log(finish);
-                console.log("领取任务奖励");
-                let taskReward = await commonPost('/campaignsms/goldParty/goldCoin/add',{"taskIds":[task.taskId]});
-                console.log(taskReward);
+        console.log("开始浇水")
+        let sy_water = home.data.water;
+        while (sy_water > 0) {
+            console.log(`剩余水滴：${sy_water}`)
+            let water = await commonPost('/tree/watering',{"tree_user_id":home.data.tree_user.id});
+            //console.log(water)
+            sy_water = water.data.sy_water;
+            if (water.data.is_upgrade_reward) {
+                let upgrade = await commonPost('/tree/receive-upgrade-reward',{"reward_id":water.data.upgrade_reward_id});
+                console.log(`升级获得：水*${upgrade.data.water} 爱心值*${upgrade.data.balance}`)
+                sy_water = upgrade.data.sy_water;
+                let openBox = await commonPost('/user/open-welfare_box',{"w_id":upgrade.data.w_id});
+                console.log(openBox)
+                if (openBox.data.reward_type == 1) {
+                    console.log(`开宝箱获得：水*${openBox.data.water}`)
+                    sy_water = upgrade.data.sy_water;
+                }
             }
         }
-        let total = await commonPost('/campaignsms/couponAndsign');
-        console.log(`拥有金币: ${total.data.dailySignRsp.integral}`)
-        $.msg($.name, `用户：${userId}`, `拥有金币: ${total.data.dailySignRsp.integral}`);
+        console.log(`剩余水滴：${sy_water}`)
     }
-}
-
-async function getCookie() {
-    const token = $request.headers["x-ac-token-ticket"];
-    if (!token) {
-        return
-    }
-    const body = $.toObj($response.body);
-    if (!body.data || !body.data.userId) {
-        return
-    }
-    const newData = {"userId": body.data.userId, "token": token}
-    const index = TaiPingTong.findIndex(e => e.userId == newData.userId);
-    if (index !== -1) {
-        if (TaiPingTong[index].token == newData.token) {
-            return
-        } else {
-            TaiPingTong[index] = newData;
-            console.log(newData.token)
-            $.msg($.name, `🎉用户${newData.userId}更新token成功!`, ``);
-        }
-    } else {
-        TaiPingTong.push(newData)
-        console.log(newData.token)
-        $.msg($.name, `🎉新增用户${newData.userId}成功!`, ``);
-    }
-    $.setjson(TaiPingTong, "TaiPingTong");
 }
 
 async function commonPost(url,body = {}) {
     return new Promise(resolve => {
         const options = {
-            url: `https://ecustomer.cntaiping.com${url}`,
+            url: `https://ecustomer.cntaiping.com/love-tree/v2/api${url}`,
             headers: {
-                "Accept": "application/json;charset=UTF-8",
-                "x-ac-black-box": "",
-                "x-ac-token-ticket": token,
+                "API-TOKEN": token,
                 "Sec-Fetch-Site": "cross-site",
-                "x-ac-channel-id": "KHT",
                 "Accept-Language": "zh-CN,zh-Hans;q=0.9",
                 "Accept-Encoding": "gzip, deflate, br",
                 "Sec-Fetch-Mode": "cors",
-                "content-type": "application/json",
+                "Content-Type": "application/json;charset=utf-8",
+                "Accept": "application/json, text/plain, */*",
                 "Origin": "https://ecustomercdn.itaiping.com",
                 "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;yuangongejia#ios#kehutong#CZBIOS",
                 "Referer": "https://ecustomercdn.itaiping.com/",
-                "x-ac-mc-type": "gateway.user",
-                "Content-Length": "2",
                 "Connection": "keep-alive",
+                "ENV": "app",
                 "Sec-Fetch-Dest": "empty",
             },
             body:JSON.stringify(body)
@@ -130,25 +90,22 @@ async function commonPost(url,body = {}) {
 async function commonGet(url) {
     return new Promise(resolve => {
         const options = {
-            url: `https://ecustomer.cntaiping.com${url}`,
+            url: `https://ecustomer.cntaiping.com/love-tree/v2/api${url}`,
             headers: {
-                "Accept": "application/json;charset=UTF-8",
-                "x-ac-black-box": "",
-                "x-ac-token-ticket": token,
+                "API-TOKEN": token,
                 "Sec-Fetch-Site": "cross-site",
-                "x-ac-channel-id": "KHT",
                 "Accept-Language": "zh-CN,zh-Hans;q=0.9",
                 "Accept-Encoding": "gzip, deflate, br",
                 "Sec-Fetch-Mode": "cors",
-                "content-type": "application/json",
+                "Content-Type": "application/json;charset=utf-8",
+                "Accept": "application/json, text/plain, */*",
                 "Origin": "https://ecustomercdn.itaiping.com",
                 "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;yuangongejia#ios#kehutong#CZBIOS",
                 "Referer": "https://ecustomercdn.itaiping.com/",
-                "x-ac-mc-type": "gateway.user",
-                "Content-Length": "2",
                 "Connection": "keep-alive",
+                "ENV": "app",
                 "Sec-Fetch-Dest": "empty",
-            }
+            },
         }
         $.get(options, async (err, resp, data) => {
             try {

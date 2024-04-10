@@ -268,28 +268,31 @@ async function main() {
                 console.log(addShareFriend)
             }
         }
-        // for (const friend of findFriend.data.friendList) {
-        //     //拜访
-        //     if (!friend.stealFlag) {
-        //         continue
-        //     }
-        //     console.log(`拜访朋友：${friend.userId}`)
-        //     let visit = await commonGet(`/user-land/getByUserId?userId=${friend.userId}`,{userId: friend.userId})
-        //     if (visit.code == 0) {
-        //         console.log(`拜访成功`)
-        //         let stealGold = await commonGet(`/friend/stealGold?friendUserId=${friend.userId}`,{friendUserId: friend.userId})
-        //         if (stealGold.code == 4000) {
-        //             console.log("验证失败导致部分功能暂时用不了")
-        //             break
-        //         }
-        //         console.log(stealGold)
-        //         console.log(`获得：调料包 * ${stealGold.data}`)
-        //         let checkUserCapCode = await commonPost(`/checkUserCapCode`,{"xpos":239})
-        //         console.log(checkUserCapCode)
-        //     } else {
-        //         console.log(visit)
-        //     }
-        // }
+        for (const friend of findFriend.data.friendList) {
+            //拜访
+            if (!friend.stealFlag) {
+                continue
+            }
+            console.log(`拜访朋友：${friend.userId}`)
+            let visit = await commonGet(`/user-land/getByUserId?userId=${friend.userId}`,{userId: friend.userId})
+            if (visit.code == 0) {
+                console.log(`拜访成功`)
+                let stealGold = await commonGet(`/friend/stealGold?friendUserId=${friend.userId}`,{friendUserId: friend.userId})
+                if (stealGold.code == 4000) {
+                    console.log("触发滑块验证")
+                    let data = stealGold.data.slideImgInfo;
+                    let getXpos = await slidePost({'gap': data.slidingImage, 'bg': data.backImage})
+                    let checkUserCapCode = await commonPost(`/checkUserCapCode`,{"xpos":getXpos.x_coordinate})
+                    console.log(checkUserCapCode)
+                    console.log(`获得：调料包 * ${checkUserCapCode.data}`)
+                } else {
+                    console.log(stealGold)
+                    console.log(`获得：调料包 * ${stealGold.data}`)
+                }
+            } else {
+                console.log(visit)
+            }
+        }
         console.log("————————————")
         console.log("开始幸运抽奖")
         let activity = await commonGet("/activity/find?type=1", {type: 1})
@@ -382,6 +385,33 @@ async function commonPost(url,body) {
                 "Connection": "keep-alive",
                 "nonstr": params.nonstr,
                 "Sec-Fetch-Dest": "empty",
+            },
+            body:JSON.stringify(body)
+        }
+        $.post(options, (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`${$.name} API请求失败，请检查网路重试`)
+                } else {
+                    resolve(JSON.parse(data));
+                }
+            } catch (e) {
+                $.logErr(e, resp)
+            } finally {
+                resolve();
+            }
+        })
+    })
+}
+
+async function slidePost(body) {
+    return new Promise(resolve => {
+        let  params = getSign({}, body);
+        const options = {
+            url: `http://huakuai.xzxxn7.live/detect_slider_position`,
+            headers: {
+                'Content-Type': 'application/json',
             },
             body:JSON.stringify(body)
         }

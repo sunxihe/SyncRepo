@@ -1,147 +1,21 @@
-const $ = new Env("太平通");
+const $ = new Env("太平通-兑换");
+let appVersion = '4.0.2';
+//京东E卡：1元66 2元169 5元120 10元121 20元122 50元144
+let id = ($.isNode() ? process.env.MEIZU_GIFTID : $.getjson("TaiPingTong_GIFTID")) || 66;
 let TaiPingTong = ($.isNode() ? process.env.TaiPingTong : $.getjson("TaiPingTong")) || [];
+let token = ""
 !(async () => {
-    if (typeof $request != "undefined") {
-        await getCookie();
-    } else {
-        await main();
-    }
+    await main();
 })().catch((e) => {$.log(e)}).finally(() => {$.done({});});
 
 async function main() {
     for (const item of TaiPingTong) {
         token = item.token;
         userId = item.userId;
-        console.log(`用户：${userId}开始任务`)
-        //签到
-        console.log("开始签到")
-        let sign = await commonPost('/campaignsms/couponAndsign');
-        if (sign.code != "0000") {
-            console.log(sign.desc)
-            continue
-        }
-        if (sign.data.dailySignRsp.message) {
-            console.log(sign.data.dailySignRsp.message);
-        } else {
-            console.log("今日已签到");
-        }
-        //抽奖
-        console.log("————————————")
-        console.log("开始抽奖")
-        let giftBag = await commonPost('/campaignsms/dailySign/giftBag');
-        for (const item of giftBag.data) {
-            console.log(`签到${item.continueDay}天 状态：${item.status}`)
-            if (item.status == 1) {
-                let activityCode = item.activityCode;
-                let registerAndLogin = await lotteryPost("/tptplaybox/api/account/registerAndLogin",{"activityCode":activityCode,"phone":"","smsCode":"","ticket":"","thirdAccount":token,"registerData":{}},"",activityCode);
-                let accessKey = registerAndLogin.value.accessKey;
-                let businessInfo = JSON.stringify({"xCubeActivityCode":activityCode,"shareCode":""});
-                let lottery = await lotteryPost('/tptplaybox/api/activity/lottery',{"activityCode":activityCode,"lotteryMap":{"businessInfo":`${businessInfo}`}},accessKey,activityCode);
-                if (lottery.success) {
-                    console.log(`获得：${lottery.value[0].prizeName}`);
-                } else {
-                    console.log(lottery.errorMsg);
-                }
-            } else if (item.status == 2) {
-                console.log("已抽奖");
-            } else {
-                console.log("签到时间不足");
-            }
-        }
-        //话题PK
-        console.log("————————————")
-        console.log("开始话题PK")
-        let latestTopTopic = await commonGet('/campaignsms/tPkTopicAppointment/latestTopTopic');
-        if (latestTopTopic.data.length > 0 && latestTopTopic.data[0].isParticipateIn != 1) {
-            let standInLineTopic = await commonPost('/campaignsms/tPkTopicAppointment/standInLineTopic',{"joinPoint":latestTopTopic.data[0].joinWin,"id":latestTopTopic.data[0].id,"dataFrom":0});
-            console.log(standInLineTopic);
-            console.log(standInLineTopic.data.topicCoin)
-        }
-        //做任务
-        console.log("————————————")
-        console.log("开始做任务")
-        let taskList = await commonPost('/campaignsms/goldParty/task/list',{"activityNumber":"goldCoinParty","rewardFlag":"1","openMsgRemind":1});
-        for (const task of taskList.data.taskList) {
-            console.log(`任务：${task.name} id：${task.taskId}`)
-            if (task.taskStatus == 1) {
-                console.log("领取任务奖励");
-                let taskReward = await commonPost('/campaignsms/goldParty/goldCoin/add',{"taskIds":[task.taskId]});
-                console.log(taskReward);
-            } else if (task.taskStatus == 2) {
-                console.log("任务已完成");
-            } else {
-                console.log("开始任务");
-                //分享海报
-                if (task.taskId == 23) {
-                    let listPlatformGroupRet = await commonPost('/campaignsms/posterDetail/v2/listPlatformGroupRet?pId=2');
-                    console.log(listPlatformGroupRet);
-                    let listPosterProfession = await commonPost('/campaignsms/posterPotfession/listPosterProfession',{"pid":"2","gid":listPlatformGroupRet.data[0].id,"pageNum":1,"pageSize":15});
-                    console.log(listPosterProfession);
-                    let getPosterProfessionDetail = await commonPost('/campaignsms/posterPotfession/getPosterProfessionDetail',{"pfPosterId":listPosterProfession.data.list[0].pfPosterId,"spCode":"TPT","enviroment":"1","shareUserId":userId});
-                    console.log(getPosterProfessionDetail);
-                }
-                let finish = await commonPost('/campaignsms/goldParty/task/finish',{"taskId":[task.taskId]});
-                console.log(finish);
-                console.log("领取任务奖励");
-                let taskReward = await commonPost('/campaignsms/goldParty/goldCoin/add',{"taskIds":[task.taskId]});
-                console.log(taskReward);
-            }
-        }
-        //阅读文章
-        console.log("————————————")
-        console.log("开始阅读")
-        let informationms = await commonPost("/informationms/app/config/get/1",{"city":"1","pageSize":10,"type":"GENERAL_PLUGIN","trackDesc":"赚金币任务","plugInId":"701b3099297148a8ba979ad9c982b561"})
-        for (const item of informationms.data) {
-            console.log(`文章：${item.cell[0][0].title}`)
-            let articleId = item.cell[0][0].contentId;
-            let serviceNo = item.cell[0][0].serviceNo;
-            let coinInfoV2 = await commonPost('/informationms/app/v2/article/web/coinInfoV2',{"articleId":articleId,"source":"TPT","detailUrl":`https://ecustomercdn.itaiping.com/static/newscontent/#/info?articleId=${articleId}&source=TPT&x_utmId=10013&serviceNo=${serviceNo}&x_businesskey=articleId`,"deviceId":"","version":"V2"});
-            await $.wait(5000);
-            let read = await commonPost('/informationms/app/v2/read/gold',{"articleId":articleId,"source":"TPT"});
-            console.log(read);
-        }
-        //领金币
-        console.log("————————————")
-        console.log("开始领金币")
-        let queryList = await commonPost('/campaignsms/coinBubble/queryList');
-        if (queryList.data.length > 0) {
-            let getAllCoins = await commonPost('/campaignsms/coinBubble/getAllCoins');
-            console.log(`获得：${getAllCoins.data.coinNum}金币`);
-        }
-        //金币查询
-        console.log("————————————")
-        console.log("金币查询")
-        let total = await commonPost('/campaignsms/couponAndsign');
-        console.log(`拥有金币: ${total.data.dailySignRsp.integral}`)
-        $.msg($.name, `用户：${userId}`, `拥有金币: ${total.data.dailySignRsp.integral}`);
+        console.log(`用户：${userId}开始兑换`)
+        let receive = await commonPost("/campaignsms/coin/exchange/receive",{"id":id,"appVersion":appVersion})
+        console.log(receive);
     }
-}
-
-async function getCookie() {
-    const token = $request.headers["x-ac-token-ticket"];
-    if (!token) {
-        return
-    }
-    const body = $.toObj($response.body);
-    if (!body.data || !body.data.userId) {
-        return
-    }
-    const newData = {"userId": body.data.userId, "token": token}
-    const index = TaiPingTong.findIndex(e => e.userId == newData.userId);
-    if (index !== -1) {
-        if (TaiPingTong[index].token == newData.token) {
-            return
-        } else {
-            TaiPingTong[index] = newData;
-            console.log(newData.token)
-            $.msg($.name, `🎉用户${newData.userId}更新token成功!`, ``);
-        }
-    } else {
-        TaiPingTong.push(newData)
-        console.log(newData.token)
-        $.msg($.name, `🎉新增用户${newData.userId}成功!`, ``);
-    }
-    $.setjson(TaiPingTong, "TaiPingTong");
 }
 
 async function commonPost(url,body = {}) {
@@ -168,97 +42,12 @@ async function commonPost(url,body = {}) {
             },
             body:JSON.stringify(body)
         }
-        $.post(options, async (err, resp, data) => {
+        $.post(options, (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
                     console.log(`${$.name} API请求失败，请检查网路重试`)
                 } else {
-                    await $.wait(2000);
-                    resolve(JSON.parse(data));
-                }
-            } catch (e) {
-                $.logErr(e, resp)
-            } finally {
-                resolve();
-            }
-        })
-    })
-}
-
-async function commonGet(url) {
-    return new Promise(resolve => {
-        const options = {
-            url: `https://ecustomer.cntaiping.com${url}`,
-            headers: {
-                "Accept": "application/json;charset=UTF-8",
-                "x-ac-black-box": "",
-                "x-ac-token-ticket": token,
-                "Sec-Fetch-Site": "cross-site",
-                "x-ac-channel-id": "KHT",
-                "Accept-Language": "zh-CN,zh-Hans;q=0.9",
-                "Accept-Encoding": "gzip, deflate, br",
-                "Sec-Fetch-Mode": "cors",
-                "content-type": "application/json",
-                "Origin": "https://ecustomercdn.itaiping.com",
-                "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;yuangongejia#ios#kehutong#CZBIOS",
-                "Referer": "https://ecustomercdn.itaiping.com/",
-                "x-ac-mc-type": "gateway.user",
-                "Content-Length": "2",
-                "Connection": "keep-alive",
-                "Sec-Fetch-Dest": "empty",
-            }
-        }
-        $.get(options, async (err, resp, data) => {
-            try {
-                if (err) {
-                    console.log(`${JSON.stringify(err)}`)
-                    console.log(`${$.name} API请求失败，请检查网路重试`)
-                } else {
-                    await $.wait(2000);
-                    resolve(JSON.parse(data));
-                }
-            } catch (e) {
-                $.logErr(e, resp)
-            } finally {
-                resolve();
-            }
-        })
-    })
-}
-
-async function lotteryPost(url,body = {},accessKey,activityCode) {
-    return new Promise(resolve => {
-        const options = {
-            url: `https://ecustomer.cntaiping.com${url}`,
-            headers: {
-                "Accept": "*/*",
-                "x-ac-black-box": "vWPVl171271266676flmcpAmJa",
-                "channel": 0,
-                "Sec-Fetch-Site": "cross-site",
-                "accessKey": accessKey,
-                "activityCode": activityCode,
-                "Accept-Language": "zh-CN,zh-Han,s;q=0.9",
-                "Accept-Encoding": "gzip, deflate, br",
-                "Sec-Fetch-Mode": "cors",
-                "platform": "",
-                "Origin": "https://ecustomercdn.itaiping.com",
-                "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;yuangongejia#ios#kehutong#CZBIOS",
-                "Referer": "https://ecustomercdn.itaiping.com/",
-                "tokenkey": token,
-                "Connection": "keep-alive",
-                "Sec-Fetch-Dest": "empty",
-                "Content-Type": "application/json"
-            },
-            body:JSON.stringify(body)
-        }
-        $.post(options, async (err, resp, data) => {
-            try {
-                if (err) {
-                    console.log(`${JSON.stringify(err)}`)
-                    console.log(`${$.name} API请求失败，请检查网路重试`)
-                } else {
-                    await $.wait(2000);
                     resolve(JSON.parse(data));
                 }
             } catch (e) {

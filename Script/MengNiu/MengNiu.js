@@ -47,6 +47,20 @@ async function main() {
         //抽奖多一次
         let Luckdraw = await commonPost("Luckdraw",`UID=${userId}&ActivityTimeID=106`)
         console.log(Luckdraw)
+        //提现
+        console.log("————————————")
+        console.log("开始提现")
+        let wallet = await mcommonPost("/xcx/m/wallet",encrypt({"token":token,"b":2617,"lat":"","lng":""}))
+        if (wallet.data.total_balance > 0) {
+            let withdraw = await mcommonPost("/xcx/u/dowithdraw",encrypt({"amount":wallet.data.total_balance/100,"lng":"","lat":"","is_all_reflect":1,"token":token,"b":2617}))
+            if (withdraw.flag == 0) {
+                console.log(`提现成功，提现金额：${wallet.data.total_balance/100}元`)
+            } else {
+                console.log(withdraw.msg)
+            }
+        } else {
+            console.log("无可提现金额")
+        }
         //营养值查询
         console.log("————————————")
         console.log("营养值查询")
@@ -134,7 +148,7 @@ async function mcommonPost(url,encode) {
                 "size": "393,754",
                 "token": token,
                 "platform": "ios",
-                "t": 1712649186,
+                "t": timestamp,
                 "deviceOrientation": "portrait",
                 "model": "iPhone 14 Pro<iPhone15,2>",
                 "Accept-Encoding": "gzip,compress,br,deflate",

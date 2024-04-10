@@ -36,8 +36,9 @@ async function main() {
         console.log("————————————")
         console.log("画龙领福气")
         let login = await commonPost("Login",`UID=${userId}`)
-        console.log(login)
         for (let i = 0; i < login.result.GameCount; i++) {
+            let login = await commonPost("Login",`UID=${userId}`)
+            console.log(login)
             let GameRecord = await commonPost("GameRecord",`UID=${userId}&Difficulty=${login.result.Difficulty + 1}&IsSuccess=1&ActivityTimeID=106`)
             console.log(GameRecord)
             let Luckdraw = await commonPost("Luckdraw",`UID=${userId}&ActivityTimeID=106`)
@@ -51,7 +52,7 @@ async function main() {
         console.log("营养值查询")
         let user = await mcommonPost("/xcx/m/user",encrypt({"token":token,"b":2617,"lat":"","lng":""}))
         console.log(`拥有营养值：${user.data.user.proteinBalance}`)
-        $.msg($.name, `用户：${userId}`, `拥有金币: ${user.data.user.proteinBalance}`);
+        $.msg($.name, `用户：${userId}`, `拥有营养值: ${user.data.user.proteinBalance}`);
     }
 }
 

@@ -282,8 +282,8 @@ async function main() {
                     console.log("触发滑块验证")
                     let data = stealGold.data.slideImgInfo;
                     let getXpos = await slidePost({'gap': data.slidingImage, 'bg': data.backImage})
+                    console.log(getXpos)
                     let checkUserCapCode = await commonPost(`/checkUserCapCode`,{"xpos":getXpos.x_coordinate})
-                    console.log(checkUserCapCode)
                     console.log(`获得：调料包 * ${checkUserCapCode.data}`)
                 } else {
                     console.log(stealGold)
@@ -373,6 +373,7 @@ async function commonPost(url,body) {
                 "sign": params.sign,
                 "Accept": "*/*",
                 "timestamp": params.timestamp,
+                "Authorization": token,
                 "Sec-Fetch-Site": "cross-site",
                 "Accept-Language": "zh-CN,zh;q=0.9",
                 "Accept-Encoding": "gzip, deflate, br",

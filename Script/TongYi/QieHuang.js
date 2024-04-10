@@ -286,6 +286,10 @@ async function main() {
                     console.log("触发滑块验证")
                     let data = stealGold.data.slideImgInfo;
                     let getXpos = await slidePost({'gap': data.slidingImage, 'bg': data.backImage})
+                    if (!getXpos) {
+                        console.log("滑块验证服务不在运行，请联系作者")
+                        break
+                    }
                     console.log(getXpos)
                     let checkUserCapCode = await commonPost(`/checkUserCapCode`,{"xpos":getXpos.x_coordinate})
                     console.log(`获得：调料包 * ${checkUserCapCode.data}`)

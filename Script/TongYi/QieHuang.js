@@ -276,9 +276,13 @@ async function main() {
             console.log(`拜访朋友：${friend.userId}`)
             let visit = await commonGet(`/user-land/getByUserId?userId=${friend.userId}`,{userId: friend.userId})
             if (visit.code == 0) {
-                console.log(`拜访成功`)
                 let stealGold = await commonGet(`/friend/stealGold?friendUserId=${friend.userId}`,{friendUserId: friend.userId})
                 if (stealGold.code == 4000) {
+                    if (!stealGold.data.slideImgInfo) {
+                        console.log("验证失败导致部分功能暂时用不了")
+                        break
+                    }
+                    console.log(`拜访成功`)
                     console.log("触发滑块验证")
                     let data = stealGold.data.slideImgInfo;
                     let getXpos = await slidePost({'gap': data.slidingImage, 'bg': data.backImage})

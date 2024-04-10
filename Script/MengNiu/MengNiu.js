@@ -46,8 +46,12 @@ async function main() {
         //抽奖多一次
         let Luckdraw = await commonPost("Luckdraw",`UID=${userId}&ActivityTimeID=106`)
         console.log(Luckdraw)
+        //营养值查询
+        console.log("————————————")
+        console.log("营养值查询")
         let user = await mcommonPost("/xcx/m/user",encrypt({"token":token,"b":2617,"lat":"","lng":""}))
         console.log(`拥有营养值：${user.data.user.proteinBalance}`)
+        $.msg($.name, `用户：${userId}`, `拥有金币: ${user.data.user.proteinBalance}`);
     }
 }
 

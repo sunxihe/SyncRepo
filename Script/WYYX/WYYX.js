@@ -1,7 +1,8 @@
 const $ = new Env('网易严选');
-let WYYX = ($.isNode() ? process.env.WYYX : $.getjson("WYYX")) || "";
+let WYYX = ($.isNode() ? process.env.WYYX : $.getjson("WYYX")) || [];
 let cookie=''
 !(async () => {
+    await getCookie();
     if (typeof $request != "undefined") {
         await getCookie();
     } else {
@@ -10,10 +11,18 @@ let cookie=''
 })().catch((e) => {$.log(e)}).finally(() => {$.done({});});
 
 async function main() {
+    for (const item of WYYX) {
+        cookie = item.cookie;
+        userId = item.userId;
+        console.log(`用户：${userId}开始任务`)
+    }
     //签到
+    console.log("开始签到")
     let sign = await commonGet(`/act-attendance/att/v3/sign`);
     console.log(sign.msg)
     //app任务
+    console.log("————————————")
+    console.log("开始app任务")
     let taskList = await commonGet(`/act-attendance/task/list`);
     for (const task of taskList.data.dailyTasks) {
         console.log(`任务：${task.title}`)
@@ -25,6 +34,8 @@ async function main() {
         }
     }
     //小程序任务
+    console.log("————————————")
+    console.log("开始小程序任务")
     let weChatTaskList = await weChatGet(`/act-attendance/task/list`);
     for (const task of weChatTaskList.data.dailyTasks) {
         console.log(`任务：${task.title}`)
@@ -35,8 +46,10 @@ async function main() {
             console.log(reward.msg)
         }
     }
+    //拆礼盒
+    console.log("————————————")
+    console.log("开始拆礼盒")
     let getAwardNum = await commonGet(`/act-attendance/att/v4/index`);
-    console.log(getAwardNum)
     let remainStepCount = getAwardNum.data.game.remainStepCount;
     for (let i = 0;i<remainStepCount;i++) {
         let getAward = await commonGet(`/act-attendance/att/v4/walk`);
@@ -44,9 +57,13 @@ async function main() {
         let awardName = getAward.data.awardDetailsInfoDTOS[0].awardName;
         console.log("拆礼盒获得："+awardName)
     }
-    console.log(getAwardNum.data.points)
-    let point = await getPoint();
-    console.log(point)
+    //积分查询
+    console.log("————————————")
+    console.log("积分查询")
+    let getPoint = await commonGet(`/act-attendance/att/v4/index`);
+    console.log(`拥有积分: ${getPoint.data.points}`)
+    $.msg($.name, `用户：${userId}`, `拥有积分: ${getPoint.data.points}`);
+
 }
 
 function getPoint() {
@@ -84,8 +101,13 @@ function getPoint() {
 
 async function getCookie() {
     const cookie = $request.headers["cookie"];
-    console.log(cookie)
-    const userId = 1;
+    let result = {};
+    let paramsArr = cookie.split(";")
+    for(let i = 0,len = paramsArr.length;i < len;i++){
+        let arr = paramsArr[i].trim().split('=')
+        result[arr[0]] = arr[1];
+    }
+    const userId = result.yx_userid;
     const newData = {"userId": userId, "cookie": cookie}
     const index = WYYX.findIndex(e => e.userId == newData.userId);
     if (index !== -1) {

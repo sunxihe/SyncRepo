@@ -1,0 +1,9 @@
+#!name=网易严选
+#!desc=网易严选
+#!category=羊毛
+
+    [Script]
+网易严选_获取cookie = type=http-request,pattern=^https:\/\/act\.you\.163\.com\/act-attendance\/task\/list,script-path=https://raw.githubusercontent.com/xzxxn777/Surge/main/Script/WYYX/WYYX.js,requires-body=1,max-size=0
+
+[MITM]
+hostname = %APPEND% act.you.163.com

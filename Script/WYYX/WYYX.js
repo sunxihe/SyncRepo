@@ -2,7 +2,6 @@ const $ = new Env('网易严选');
 let WYYX = ($.isNode() ? process.env.WYYX : $.getjson("WYYX")) || [];
 let cookie=''
 !(async () => {
-    await getCookie();
     if (typeof $request != "undefined") {
         await getCookie();
     } else {

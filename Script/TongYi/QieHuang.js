@@ -302,7 +302,7 @@ async function main() {
                         console.log(`获得：调料包 * ${stealGold.data}`)
                     } else {
                         slide = false;
-                        console.log(draw.message)
+                        console.log(stealGold.message)
                         break
                     }
                 }

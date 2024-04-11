@@ -10,7 +10,7 @@ let cookie=''
 })().catch((e) => {$.log(e)}).finally(() => {$.done({});});
 
 async function main() {
-    for (const item of JSON.parse(WYYX)) {
+    for (const item of WYYX) {
         cookie = item.cookie;
         userId = item.userId;
         console.log(`用户：${userId}开始任务`)

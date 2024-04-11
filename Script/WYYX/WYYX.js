@@ -69,7 +69,7 @@ async function main() {
 }
 
 async function getCookie() {
-    let cookie = $request.headers["cookie"];
+    const cookie = $request.headers["cookie"];
     if (!cookie) {
         return
     }
@@ -80,7 +80,6 @@ async function getCookie() {
         result[arr[0]] = arr[1];
     }
     const userId = result.yx_userid;
-    cookie ="NTES_YD_SESS=" +result.NTES_YD_SESS + ';P_INFO=' + result.P_INFO + ';yx_csrf=' + result.yx_csrf;
     if (!userId) {
         return
     }

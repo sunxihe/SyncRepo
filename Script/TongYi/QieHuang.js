@@ -17,6 +17,7 @@ async function main() {
     for (const item of QieHuang_Body) {
         wid = item.wid;
         thirdId = item.thirdId;
+        let lottery = true;
         //登录
         let loginInfo = await commonPost("/public/api/login", item)
         console.log(`用户：${wid} 登录成功！`)
@@ -46,6 +47,7 @@ async function main() {
             if (land.status === 0) {
                 console.log(`第${land.no}块地：未解锁`)
                 if (land.unlockGold > userInfo.data.gold) {
+                    lottery = false;
                     console.log(`解锁需要：${land.unlockGold} 调料包不足`)
                     continue
                 }
@@ -179,6 +181,7 @@ async function main() {
             if (role.status === 0) {
                 console.log(`角色：${role.name} 未解锁`)
                 if (role.unlockNum > userInfo.data.gold) {
+                    lottery = false;
                     console.log(`解锁需要：${role.unlockNum} 调料包不足`)
                     continue
                 }
@@ -316,40 +319,44 @@ async function main() {
         for (const prize of activity.data.lotteryPrizeConfigList) {
             console.log(`礼品：${prize.name} 库存：[${prize.usableStock}/${prize.stock}]`)
         }
-        let id = activity.data.id;
-        let count = activity.data.drawCount - activity.data.userDrawCount;
-        for (let i = 0; i < count; i++) {
-            let slide = true;
-            while (slide) {
-                let draw = await commonGet(`/activity/draw?id=${id}`, {id: id})
-                if (draw.code == 4000) {
-                    if (!draw.data.slideImgInfo) {
-                        console.log("验证失败导致部分功能暂时用不了")
+        if (lottery) {
+            let id = activity.data.id;
+            let count = activity.data.drawCount - activity.data.userDrawCount;
+            for (let i = 0; i < count; i++) {
+                let slide = true;
+                while (slide) {
+                    let draw = await commonGet(`/activity/draw?id=${id}`, {id: id})
+                    if (draw.code == 4000) {
+                        if (!draw.data.slideImgInfo) {
+                            console.log("验证失败导致部分功能暂时用不了")
+                            break
+                        }
+                        console.log("触发滑块验证")
+                        let data = draw.data.slideImgInfo;
+                        let getXpos = await slidePost({'gap': data.slidingImage, 'bg': data.backImage})
+                        if (!getXpos) {
+                            console.log("滑块验证服务不在运行，请联系作者")
+                            $.msg($.name, `滑块验证服务不在运行，请联系作者`);
+                            break
+                        }
+                        console.log(getXpos)
+                        let checkUserCapCode = await commonPost(`/checkUserCapCode`,{"xpos":getXpos.x_coordinate})
+                        console.log(`获得：调料包 * ${checkUserCapCode.data}`)
+                    } else if (draw.code == 0) {
+                        slide = false;
+                        console.log(`抽奖获得：${draw.data.name}`)
+                        if (draw.data.type == 2) {
+                            $.msg($.name, `用户：${wid}`, `抽奖获得：${draw.data.name}`);
+                        }
+                    } else {
+                        slide = false;
+                        console.log(draw.message)
                         break
                     }
-                    console.log("触发滑块验证")
-                    let data = draw.data.slideImgInfo;
-                    let getXpos = await slidePost({'gap': data.slidingImage, 'bg': data.backImage})
-                    if (!getXpos) {
-                        console.log("滑块验证服务不在运行，请联系作者")
-                        $.msg($.name, `滑块验证服务不在运行，请联系作者`);
-                        break
-                    }
-                    console.log(getXpos)
-                    let checkUserCapCode = await commonPost(`/checkUserCapCode`,{"xpos":getXpos.x_coordinate})
-                    console.log(`获得：调料包 * ${checkUserCapCode.data}`)
-                } else if (draw.code == 0) {
-                    slide = false;
-                    console.log(`抽奖获得：${draw.data.name}`)
-                    if (draw.data.type == 2) {
-                        $.msg($.name, `用户：${wid}`, `抽奖获得：${draw.data.name}`);
-                    }
-                } else {
-                    slide = false;
-                    console.log(draw.message)
-                    break
                 }
             }
+        } else {
+            console.log("土地和角色没有全部解锁，不参与抽奖")
         }
         console.log("————————————")
         console.log("获取库存信息")

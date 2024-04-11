@@ -103,6 +103,9 @@ function getPoint() {
 
 async function getCookie() {
     const cookie = $request.headers["cookie"];
+    if (!cookie) {
+        return
+    }
     let result = {};
     let paramsArr = cookie.split(";")
     for(let i = 0,len = paramsArr.length;i < len;i++){
@@ -110,6 +113,9 @@ async function getCookie() {
         result[arr[0]] = arr[1];
     }
     const userId = result.yx_userid;
+    if (!userId) {
+        return
+    }
     const newData = {"userId": userId, "cookie": cookie}
     const index = WYYX.findIndex(e => e.userId == newData.userId);
     if (index !== -1) {

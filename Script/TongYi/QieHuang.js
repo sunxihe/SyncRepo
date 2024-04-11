@@ -276,26 +276,35 @@ async function main() {
             console.log(`拜访朋友：${friend.userId}`)
             let visit = await commonGet(`/user-land/getByUserId?userId=${friend.userId}`,{userId: friend.userId})
             if (visit.code == 0) {
-                let stealGold = await commonGet(`/friend/stealGold?friendUserId=${friend.userId}`,{friendUserId: friend.userId})
-                if (stealGold.code == 4000) {
-                    if (!stealGold.data.slideImgInfo) {
-                        console.log("验证失败导致部分功能暂时用不了")
+                let slide = true;
+                while (slide) {
+                    let stealGold = await commonGet(`/friend/stealGold?friendUserId=${friend.userId}`,{friendUserId: friend.userId})
+                    if (stealGold.code == 4000) {
+                        if (!stealGold.data.slideImgInfo) {
+                            console.log("验证失败导致部分功能暂时用不了")
+                            break
+                        }
+                        console.log(`拜访成功`)
+                        console.log("触发滑块验证")
+                        let data = stealGold.data.slideImgInfo;
+                        let getXpos = await slidePost({'gap': data.slidingImage, 'bg': data.backImage})
+                        if (!getXpos) {
+                            console.log("滑块验证服务不在运行，请联系作者")
+                            $.msg($.name, `滑块验证服务不在运行，请联系作者`);
+                            break
+                        }
+                        console.log(getXpos)
+                        let checkUserCapCode = await commonPost(`/checkUserCapCode`,{"xpos":getXpos.x_coordinate})
+                        console.log(`获得：调料包 * ${checkUserCapCode.data}`)
+                    } else if (stealGold.code == 0) {
+                        slide = false;
+                        console.log(`拜访成功`)
+                        console.log(`获得：调料包 * ${stealGold.data}`)
+                    } else {
+                        slide = false;
+                        console.log(draw.message)
                         break
                     }
-                    console.log(`拜访成功`)
-                    console.log("触发滑块验证")
-                    let data = stealGold.data.slideImgInfo;
-                    let getXpos = await slidePost({'gap': data.slidingImage, 'bg': data.backImage})
-                    if (!getXpos) {
-                        console.log("滑块验证服务不在运行，请联系作者")
-                        break
-                    }
-                    console.log(getXpos)
-                    let checkUserCapCode = await commonPost(`/checkUserCapCode`,{"xpos":getXpos.x_coordinate})
-                    console.log(`获得：调料包 * ${checkUserCapCode.data}`)
-                } else {
-                    console.log(stealGold)
-                    console.log(`获得：调料包 * ${stealGold.data}`)
                 }
             } else {
                 console.log(visit)
@@ -306,6 +315,41 @@ async function main() {
         let activity = await commonGet("/activity/find?type=1", {type: 1})
         for (const prize of activity.data.lotteryPrizeConfigList) {
             console.log(`礼品：${prize.name} 库存：[${prize.usableStock}/${prize.stock}]`)
+        }
+        let id = activity.data.id;
+        let count = activity.data.drawCount - activity.data.userDrawCount;
+        for (let i = 0; i < count; i++) {
+            let slide = true;
+            while (slide) {
+                let draw = await commonGet(`/activity/draw?id=${id}`, {id: id})
+                if (draw.code == 4000) {
+                    if (!draw.data.slideImgInfo) {
+                        console.log("验证失败导致部分功能暂时用不了")
+                        break
+                    }
+                    console.log("触发滑块验证")
+                    let data = draw.data.slideImgInfo;
+                    let getXpos = await slidePost({'gap': data.slidingImage, 'bg': data.backImage})
+                    if (!getXpos) {
+                        console.log("滑块验证服务不在运行，请联系作者")
+                        $.msg($.name, `滑块验证服务不在运行，请联系作者`);
+                        break
+                    }
+                    console.log(getXpos)
+                    let checkUserCapCode = await commonPost(`/checkUserCapCode`,{"xpos":getXpos.x_coordinate})
+                    console.log(`获得：调料包 * ${checkUserCapCode.data}`)
+                } else if (draw.code == 0) {
+                    slide = false;
+                    console.log(`抽奖获得：${draw.data.name}`)
+                    if (draw.data.type == 2) {
+                        $.msg($.name, `用户：${wid}`, `抽奖获得：${draw.data.name}`);
+                    }
+                } else {
+                    slide = false;
+                    console.log(draw.message)
+                    break
+                }
+            }
         }
         console.log("————————————")
         console.log("获取库存信息")

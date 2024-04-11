@@ -10,59 +10,62 @@ let cookie=''
 })().catch((e) => {$.log(e)}).finally(() => {$.done({});});
 
 async function main() {
-    for (const item of WYYX) {
+    for (const item of JSON.parse(WYYX)) {
         cookie = item.cookie;
         userId = item.userId;
         console.log(`用户：${userId}开始任务`)
-    }
-    //签到
-    console.log("开始签到")
-    let sign = await commonGet(`/act-attendance/att/v3/sign`);
-    console.log(sign.msg)
-    //app任务
-    console.log("————————————")
-    console.log("开始app任务")
-    let taskList = await commonGet(`/act-attendance/task/list`);
-    for (const task of taskList.data.dailyTasks) {
-        console.log(`任务：${task.title}`)
-        if(task.taskId != 201001){
-            let doTask = await commonPost(`/napi/play/web/taskT/task/trigger?_=${new Date().getTime()}`,{"taskId":task.taskId});
-            console.log(doTask.msg)
-            let reward = await commonPost(`/act-attendance/task/reward`,{"taskId":task.taskId});
-            console.log(reward.msg)
+        //签到
+        console.log("开始签到")
+        let sign = await commonGet(`/act-attendance/att/v3/sign`);
+        console.log(sign.msg)
+        if(sign.code == 401){
+            $.msg($.name, `用户：${userId}`, `cookie已过期，请重新获取`);
+            continue
         }
-    }
-    //小程序任务
-    console.log("————————————")
-    console.log("开始小程序任务")
-    let weChatTaskList = await weChatGet(`/act-attendance/task/list`);
-    for (const task of weChatTaskList.data.dailyTasks) {
-        console.log(`任务：${task.title}`)
-        if(task.taskId != 201001){
-            let doTask = await commonPost(`/napi/play/web/taskT/task/trigger?_=${new Date().getTime()}`,{"taskId":task.taskId});
-            console.log(doTask.msg)
-            let reward = await commonPost(`/act-attendance/task/reward`,{"taskId":task.taskId});
-            console.log(reward.msg)
+        //app任务
+        console.log("————————————")
+        console.log("开始app任务")
+        let taskList = await commonGet(`/act-attendance/task/list`);
+        for (const task of taskList.data.dailyTasks) {
+            console.log(`任务：${task.title}`)
+            if(task.taskId != 201001){
+                let doTask = await commonPost(`/napi/play/web/taskT/task/trigger?_=${new Date().getTime()}`,{"taskId":task.taskId});
+                console.log(doTask.msg)
+                let reward = await commonPost(`/act-attendance/task/reward`,{"taskId":task.taskId});
+                console.log(reward.msg)
+            }
         }
+        //小程序任务
+        console.log("————————————")
+        console.log("开始小程序任务")
+        let weChatTaskList = await weChatGet(`/act-attendance/task/list`);
+        for (const task of weChatTaskList.data.dailyTasks) {
+            console.log(`任务：${task.title}`)
+            if(task.taskId != 201001){
+                let doTask = await commonPost(`/napi/play/web/taskT/task/trigger?_=${new Date().getTime()}`,{"taskId":task.taskId});
+                console.log(doTask.msg)
+                let reward = await commonPost(`/act-attendance/task/reward`,{"taskId":task.taskId});
+                console.log(reward.msg)
+            }
+        }
+        //拆礼盒
+        console.log("————————————")
+        console.log("开始拆礼盒")
+        let getAwardNum = await commonGet(`/act-attendance/att/v4/index`);
+        let remainStepCount = getAwardNum.data.game.remainStepCount;
+        for (let i = 0;i<remainStepCount;i++) {
+            let getAward = await commonGet(`/act-attendance/att/v4/walk`);
+            console.log(getAward)
+            let awardName = getAward.data.awardDetailsInfoDTOS[0].awardName;
+            console.log("拆礼盒获得："+awardName)
+        }
+        //积分查询
+        console.log("————————————")
+        console.log("积分查询")
+        let getPoint = await commonGet(`/act-attendance/att/v4/index`);
+        console.log(`拥有积分: ${getPoint.data.points}`)
+        $.msg($.name, `用户：${userId}`, `拥有积分: ${getPoint.data.points}`);
     }
-    //拆礼盒
-    console.log("————————————")
-    console.log("开始拆礼盒")
-    let getAwardNum = await commonGet(`/act-attendance/att/v4/index`);
-    let remainStepCount = getAwardNum.data.game.remainStepCount;
-    for (let i = 0;i<remainStepCount;i++) {
-        let getAward = await commonGet(`/act-attendance/att/v4/walk`);
-        console.log(getAward)
-        let awardName = getAward.data.awardDetailsInfoDTOS[0].awardName;
-        console.log("拆礼盒获得："+awardName)
-    }
-    //积分查询
-    console.log("————————————")
-    console.log("积分查询")
-    let getPoint = await commonGet(`/act-attendance/att/v4/index`);
-    console.log(`拥有积分: ${getPoint.data.points}`)
-    $.msg($.name, `用户：${userId}`, `拥有积分: ${getPoint.data.points}`);
-
 }
 
 function getPoint() {

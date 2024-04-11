@@ -68,41 +68,8 @@ async function main() {
     }
 }
 
-function getPoint() {
-    return new Promise(resolve => {
-        const options = {
-            url: `https://m.you.163.com/xhr/points/index.json?csrf_token=6e8e21a87833576b81824d04f0157b27`,
-            headers: {
-                'Cookie':cookie,
-                'Host': 'm.you.163.com',
-                'Accept': 'application/json, text/javascript, */*; q=0.01',
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
-                'Accept-Encoding': 'gzip, deflate, br',
-                'Content-Type': 'application/json',
-                'Origin': 'https://m.you.163.com'
-            },
-        }
-        $.post(options, async (err, resp, data) => {
-            try {
-                if (err) {
-                    console.log(`${JSON.stringify(err)}`)
-                    console.log(`${$.name} API请求失败，请检查网路重试`)
-                } else {
-                    await $.wait(2000);
-                    resolve(JSON.parse(data));
-                }
-            } catch (e) {
-                $.logErr(e, resp)
-            } finally {
-                resolve();
-            }
-        })
-    })
-}
-
 async function getCookie() {
-    const cookie = $request.headers["cookie"];
+    let cookie = $request.headers["cookie"];
     if (!cookie) {
         return
     }
@@ -113,6 +80,7 @@ async function getCookie() {
         result[arr[0]] = arr[1];
     }
     const userId = result.yx_userid;
+    cookie ="NTES_YD_SESS=" +result.NTES_YD_SESS + ';P_INFO=' + result.P_INFO + ';yx_csrf=' + result.yx_csrf;
     if (!userId) {
         return
     }

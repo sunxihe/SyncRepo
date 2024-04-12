@@ -47,6 +47,23 @@ async function main() {
         //抽奖多一次
         let Luckdraw = await commonPost("Luckdraw",`UID=${userId}&ActivityTimeID=106`)
         console.log(Luckdraw)
+        //狂欢派兑
+        console.log("————————————")
+        console.log("开始狂欢派兑抽奖")
+        let flag = 0;
+        while(flag == 0) {
+            let doLottery = await mcommonPost("/xcx/v2/do_lottery",encrypt({"lottery_id":2405,"token":token,"b":2617,"lat":"32.31101209852431","lng":"118.34711615668402"}))
+            if (doLottery.flag == 0) {
+                console.log(`抽奖获得：${doLottery.data.name}`)
+                if (doLottery.data.type == 22) {
+                    $.msg($.name, `用户：${userId}`, `抽奖获得: ${doLottery.data.name}`);
+                }
+            } else {
+                console.log(doLottery.msg)
+            }
+            flag = doLottery.flag
+            await $.wait(2000);
+        }
         //提现
         console.log("————————————")
         console.log("开始提现")

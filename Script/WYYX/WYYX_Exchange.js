@@ -27,7 +27,7 @@ async function main() {
                 let getActPacket = await commonGet(`/xhr/points/exVitrual/getActPacket.json?csrf_token=${token}&actId=${actId}&actPacketId=${actPacketId}&actPacketGiftId=${actPacketGiftId}&actType=${actType}`);
                 let activationCode = getActPacket.data.actiCode;
                 let activationType = getActPacket.data.actiType;
-                for (let i = 0; i < 50; i++) {
+                for (let i = 0; i < 30; i++) {
                     let exchange = await commonPost(`/xhr/points/exVitrual/pointExActivate.json?csrf_token=${token}`,`activationType=${activationType}&actType=${actType}&activationCode=${activationCode}&activationExt=%7B%22actId%22%3A${actId}%2C%22actPacketId%22%3A${actPacketId}%7D`);
                     console.log(exchange)
                 }
@@ -62,7 +62,6 @@ async function commonPost(url,body = '') {
                     console.log(`${JSON.stringify(err)}`)
                     console.log(`${$.name} API请求失败，请检查网路重试`)
                 } else {
-                    await $.wait(2000);
                     resolve(JSON.parse(data));
                 }
             } catch (e) {
@@ -99,7 +98,6 @@ async function commonGet(url) {
                     console.log(`${JSON.stringify(err)}`)
                     console.log(`${$.name} API请求失败，请检查网路重试`)
                 } else {
-                    await $.wait(2000);
                     resolve(JSON.parse(data));
                 }
             } catch (e) {

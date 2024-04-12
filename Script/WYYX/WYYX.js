@@ -83,7 +83,18 @@ async function getCookie() {
     if (!userId) {
         return
     }
-    const newData = {"userId": userId, "cookie": cookie}
+    const urlStr = $request.url.split('?')[1];
+    let result_token = {};
+    let paramsArr_token = urlStr.split('&')
+    for(let i = 0,len = paramsArr_token.length;i < len;i++){
+        let arr = paramsArr_token[i].split('=')
+        result_token[arr[0]] = arr[1];
+    }
+    const token = result.csrf_token;
+    if (!token) {
+        return
+    }
+    const newData = {"userId": userId, "cookie": cookie, "token": token};
     const index = WYYX.findIndex(e => e.userId == newData.userId);
     if (index !== -1) {
         if (WYYX[index].cookie == newData.cookie) {
@@ -91,11 +102,13 @@ async function getCookie() {
         } else {
             WYYX[index] = newData;
             console.log(newData.cookie)
+            console.log(token)
             $.msg($.name, `🎉用户${newData.userId}更新cookie成功!`, ``);
         }
     } else {
         WYYX.push(newData)
         console.log(newData.cookie)
+        console.log(token)
         $.msg($.name, `🎉新增用户${newData.userId}成功!`, ``);
     }
     $.setjson(WYYX, "WYYX");

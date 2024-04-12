@@ -90,7 +90,7 @@ async function getCookie() {
         let arr = paramsArr_token[i].split('=')
         result_token[arr[0]] = arr[1];
     }
-    const token = result.csrf_token;
+    const token = result_token.csrf_token;
     if (!token) {
         return
     }

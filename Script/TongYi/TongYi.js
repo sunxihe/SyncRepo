@@ -140,14 +140,14 @@ async function collectCards(activityId, body) {
             }
         }
         if (isConsumer) {
-            if ((prize.description.includes("一等奖") || prize.description.includes("二等奖"))) {
+            if (prize.type == 0) {
                 let consumerCards = await commonPost("/interactive/qianxi/amasscard/api/consumerCards",{"appid":"wx532ecb3bdaaf92f9","basicInfo":{"vid":6013753979957,"vidType":2,"bosId":4020112618957,"productId":165646,"productInstanceId":3169913957,"productVersionId":"16233","merchantId":2000020692957,"tcode":"weimob","cid":176205957},"extendInfo":{"wxTemplateId":7526,"analysis":[],"bosTemplateId":1000001420,"childTemplateIds":[{"customId":90004,"version":"crm@0.1.11"},{"customId":90002,"version":"ec@42.3"},{"customId":90006,"version":"hudong@0.0.201"},{"customId":90008,"version":"cms@0.0.419"}],"quickdeliver":{"enable":false},"youshu":{"enable":false},"source":1,"channelsource":5,"refer":"hd-card-home","mpScene":1256},"queryParameter":{"tracePromotionId":"100076753","tracepromotionid":"100076753"},"i18n":{"language":"zh","timezone":"8"},"pid":"4020112618957","storeId":"0","activityId":20001337637,"source":1,"prizeId":prize.prizeId,"_version":"2.9.2","appletVersion":280,"_transformBasicInfo":true,"v":"76e04a82cc9efce6e19336bfddab891410029744","operationSource":4,"tracePromotionId":"100076753","tracepromotionid":"100076753","vid":6013753979957,"vidType":2,"bosId":4020112618957,"productId":165646,"productInstanceId":3169913957,"productVersionId":"16233","merchantId":2000020692957,"tcode":"weimob","cid":176205957,"vidTypes":[2],"openid":"oBk224m4im1J9PnLUe8AMagujqgM"})
                 console.log(consumerCards)
                 if (prize.prizeSurplusNum > 0) {
                     $.msg($.name, `用户：${memberId}`, `兑换${prize.prizeName}成功！`);
                 }
             } else {
-                console.log("只兑换一等奖和二等奖！")
+                console.log("只兑换实物！")
             }
         } else {
             console.log("未集齐兑换该奖品的卡片!")

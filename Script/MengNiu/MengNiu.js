@@ -55,7 +55,7 @@ async function main() {
             let doLottery = await mcommonPost("/xcx/v2/do_lottery",encrypt({"lottery_id":2405,"token":token,"b":2617,"lat":"32.31101209852431","lng":"118.34711615668402"}))
             if (doLottery.flag == 0) {
                 console.log(`抽奖获得：${doLottery.data.name}`)
-                if (doLottery.data.type == 22) {
+                if (doLottery.data.type != 22) {
                     $.msg($.name, `用户：${userId}`, `抽奖获得: ${doLottery.data.name}`);
                 }
             } else {

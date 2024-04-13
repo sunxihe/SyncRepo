@@ -51,7 +51,7 @@ async function main() {
 }
 
 async function getCookie() {
-    const token = $request.headers["secureToken"];
+    const token = $request.headers["securetoken"];
     if (!token) {
         return
     }

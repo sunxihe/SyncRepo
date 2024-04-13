@@ -84,7 +84,7 @@ async function commonPost(url,body = {}) {
             headers: {
                 "Accept": "application/json, text/plain, */*",
                 "channel": 1,
-                "appToken":'4i-Lbg71lEz2KeEzN0JFPi-z_ajCn0-0PnU963oXvAnL_wodOiKqbqg7b8u_AlAbCx71igMVaXW2exC0UnyJxfnHd7PeFBD_y3bueokDmp6dGA5FfndE8oO3rXhDVVwGg8R0glhYjyT0F7T95oD-6tDP-GR6DRYqG5r5FR1N3xxFujQDDIaABKjCwixgZBofO5GKDjIW77Es255qkAyIOuMTu8Qrbj4tl648EA1p4NP4NqY5vis88fKreDw0JdJ-wVXHtd6tjlHeJuloB6teACYzW3-V08OILqDQG1x1Udg*AB',
+                "appToken":token,
                 "Sec-Fetch-Site": "same-site",
                 "Accept-Language": "zh-CN,zh-Hans;q=0.9",
                 "Accept-Encoding": "gzip, deflate, br",

@@ -44,48 +44,36 @@ async function main() {
         console.log("开始种植番茄")
         let getLand = await commonGet("/user-land/get")
         for (const land of getLand.data.gaUserLandList) {
-            if (land.status === 0 || land.status === 5) {
-                if (land.status === 0) {
-                    console.log(`第${land.no}块地：未解锁`)
-                    if (land.unlockGold > userInfo.data.gold) {
-                        lottery = false;
-                        console.log(`解锁需要：${land.unlockGold} 调料包不足`)
-                        continue
-                    }
-                    //解锁
-                    console.log(`开始解锁土地`)
-                    let unlock = await commonGet(`/user-land/unlock`)
-                    if (unlock.code == 0) {
-                        console.log(`解锁成功`)
+            if (land.status === 0) {
+                console.log(`第${land.no}块地：未解锁`)
+                if (land.unlockGold > userInfo.data.gold) {
+                    lottery = false;
+                    console.log(`解锁需要：${land.unlockGold} 调料包不足`)
+                    continue
+                }
+                //解锁
+                console.log(`开始解锁土地`)
+                let unlock = await commonGet(`/user-land/unlock`)
+                if (unlock.code == 0) {
+                    console.log(`解锁成功`)
+                    //种植番茄
+                    console.log(`开始种植番茄`)
+                    let sow = await commonGet(`/user-land/sow?no=${land.no}`, {no: land.no})
+                    if (sow.code == 0) {
+                        console.log(`种植成功`)
                     } else {
-                        console.log(unlock)
+                        console.log(sow)
                     }
-                }
-                if (land.status === 5) {
-                    //收获番茄
-                    console.log(`开始收获番茄`)
-                    let result = await commonGet(`/user-land/result?no=${land.no}`, {no: land.no})
-                    if (result.code == 0) {
-                        console.log(`收获：  番茄*${result.data}`)
+                    //消耗阳光
+                    console.log(`开始挥洒阳光`)
+                    let sun = await commonGet(`/user-land/sun?no=${land.no}`,{no:land.no})
+                    if (sun.code == 0) {
+                        console.log(`消耗阳光：${land.needSun}`)
                     } else {
-                        console.log(result)
+                        console.log(sun.message)
                     }
-                }
-                //种植番茄
-                console.log(`开始种植番茄`)
-                let sow = await commonGet(`/user-land/sow?no=${land.no}`, {no: land.no})
-                if (sow.code == 0) {
-                    console.log(`种植成功`)
                 } else {
-                    console.log(sow)
-                }
-                //消耗阳光
-                console.log(`开始挥洒阳光`)
-                let sun = await commonGet(`/user-land/sun?no=${land.no}`,{no:land.no})
-                if (sun.code == 0) {
-                    console.log(`消耗阳光：${land.needSun}`)
-                } else {
-                    console.log(sun.message)
+                    console.log(unlock)
                 }
             } else {
                 console.log(`第${land.no}块地：已解锁 阶段：${step[land.step]}（${land.sumSunCount-land.leftSunCount}/${land.sumSunCount}）`)
@@ -97,6 +85,16 @@ async function main() {
                         console.log(`种植成功`)
                     } else {
                         console.log(sow)
+                    }
+                }
+                if (land.step == 5) {
+                    //收获番茄
+                    console.log(`开始收获番茄`)
+                    let result = await commonGet(`/user-land/result?no=${land.no}`, {no: land.no})
+                    if (result.code == 0) {
+                        console.log(`收获：  番茄*${result.data}`)
+                    } else {
+                        console.log(result)
                     }
                 }
                 //消耗阳光

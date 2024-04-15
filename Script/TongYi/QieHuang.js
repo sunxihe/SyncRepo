@@ -93,6 +93,14 @@ async function main() {
                     let result = await commonGet(`/user-land/result?no=${land.no}`, {no: land.no})
                     if (result.code == 0) {
                         console.log(`收获：  番茄*${result.data}`)
+                        //种植番茄
+                        console.log(`开始种植番茄`)
+                        let sow = await commonGet(`/user-land/sow?no=${land.no}`, {no: land.no})
+                        if (sow.code == 0) {
+                            console.log(`种植成功`)
+                        } else {
+                            console.log(sow)
+                        }
                     } else {
                         console.log(result)
                     }

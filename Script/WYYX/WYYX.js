@@ -13,10 +13,11 @@ async function main() {
     for (const item of WYYX) {
         cookie = item.cookie;
         userId = item.userId;
+        token = item.token;
         console.log(`用户：${userId}开始任务`)
         //签到
         console.log("开始签到")
-        let sign = await commonGet(`/act-attendance/att/v3/sign`);
+        let sign = await commonGet(`/act-attendance/att/v3/sign?csrf_token=${token}&__timestamp=${new Date().getTime()}&`);
         console.log(sign.msg)
         if(sign.code == 401){
             $.msg($.name, `用户：${userId}`, `cookie已过期，请重新获取`);

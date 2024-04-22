@@ -1,11 +1,18 @@
 const $ = new Env('涌鑫充电');
-let userIdArr = ["917420525","917420536"]
+const YongXin = ($.isNode() ? process.env.YongXin : $.getjson("YongXin")) || [];
 !(async () => {
-    await main();
+    if (typeof $request != "undefined") {
+        await getCookie();
+    } else {
+        await main();
+    }
 })().catch((e) => {$.log(e)}).finally(() => {$.done({});});
 
 async function main() {
-    for (const userId of userIdArr) {
+    for (const item of YongXin) {
+        userId = item.userId;
+        wxOpenId = item.wxOpenId;
+        aliPayOpenId = item.aliPayOpenId;
         console.log(`用户：${userId}开始任务`)
         //签到
         console.log("开始签到")
@@ -35,10 +42,14 @@ async function main() {
         let goods = await commonPost("/goods/list",{"userId":userId})
         for (const good of goods.ret_module.list) {
             console.log(`商品：${good.name} 库存：${good.inventory} 需要积分：${good.points}`)
-            // if (good.name.includes("微信")) {
-            //     let wxExchange = await commonPost("/wxExchange",{"goodsId":good.id,"userId":userId,"openId":"oHUyx5ByKL0lpR4iz-m53m-jqnKQ","appId":"wx07cb93d4b2273a49"})
-            //     console.log(wxExchange.ret_msg)
-            // }
+            if (good.name.includes("微信") && wxOpenId) {
+                let wxExchange = await commonPost("/wxExchange",{"goodsId":good.id,"userId":userId,"openId":wxOpenId,"appId":"wx69e931b913fc8e79"})
+                console.log(wxExchange.ret_msg)
+            }
+            if (good.name.includes("支付宝") && aliPayOpenId) {
+                let wxExchange = await commonPost("/aliPayExchange",{"goodsId":good.id,"userId":userId,"aliPayOpenId":aliPayOpenId,"appId":"2021003132662022"})
+                console.log(wxExchange.ret_msg)
+            }
         }
         console.log("————————————")
         //查询积分
@@ -46,6 +57,31 @@ async function main() {
         console.log(`拥有积分: ${index.ret_module.playerPoints.points}`)
         $.msg($.name, `用户：${userId}`, `拥有积分: ${index.ret_module.playerPoints.points}`);
     }
+}
+
+async function getCookie() {
+    const body = $.toObj($response.body);
+    const userId = body.ret_module.userInfo.id;
+    const wxOpenId = body.ret_module.userInfo.wxOpenId;
+    const aliPayOpenId = body.ret_module.userInfo.aliPayOpenId;
+    const newData = {"userId": userId, "wxOpenId": wxOpenId, "aliPayOpenId": aliPayOpenId}
+    const index = YongXin.findIndex(e => e.userId == newData.userId);
+    if (index !== -1) {
+        if (YongXin[index].wxOpenId == newData.wxOpenId && YongXin[index].aliPayOpenId == newData.aliPayOpenId) {
+            return
+        } else {
+            YongXin[index] = newData;
+            console.log(newData.wxOpenId)
+            console.log(newData.aliPayOpenId)
+            $.msg($.name, `🎉用户${newData.userId}更新token成功!`, ``);
+        }
+    } else {
+        YongXin.push(newData)
+        console.log(newData.wxOpenId)
+        console.log(newData.aliPayOpenId)
+        $.msg($.name, `🎉新增用户${newData.userId}成功!`, ``);
+    }
+    $.setjson(YongXin, "YongXin");
 }
 
 async function commonPost(url,body = {}) {

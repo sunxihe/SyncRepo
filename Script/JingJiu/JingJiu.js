@@ -135,7 +135,7 @@ async function getCookie() {
         const body = $.toObj($request.body);
         console.log(body.v1)
         console.log(decrypt(body.v1))
-        $.setjson(decrypt(body.v1)), "JingJiu_LatAndLon");
+        $.setjson(decrypt(body.v1), "JingJiu_LatAndLon");
         $.msg($.name, `🎉经纬度更新成功!`, ``);
     } else {
         const token = $request.headers["Authorization"];

@@ -23,74 +23,85 @@ async function main() {
         } else {
             console.log(sign.msg)
         }
-    }
-    //幸运大转盘
-    console.log("————————————")
-    console.log("幸运大转盘")
-    let queryTurntable = await commonGet('/app/jingyoujia/taskHallTurntable/queryTurntableGoodsList')
-    let lotteryNumbers = await commonGet(`/app/jingyoujia/taskHallTurntable/getUserLotteryNumbers?activityId=${queryTurntable.data.id}`)
-    for (let i = 0; i < lotteryNumbers.data.userLotteryNumbers; i++) {
-        let lottery = await commonPost('/app/jingyoujia/taskHallTurntable/extractTurntableGoods',{"activityId":queryTurntable.data.id})
-        if (lottery.code == 200) {
-            console.log(`抽奖获得：${lottery.data.awardName}`)
-        } else {
-            console.log(lottery.msg)
+        //幸运大转盘
+        console.log("————————————")
+        console.log("幸运大转盘")
+        let queryTurntable = await commonGet('/app/jingyoujia/taskHallTurntable/queryTurntableGoodsList')
+        let lotteryNumbers = await commonGet(`/app/jingyoujia/taskHallTurntable/getUserLotteryNumbers?activityId=${queryTurntable.data.id}`)
+        for (let i = 0; i < lotteryNumbers.data.userLotteryNumbers; i++) {
+            let lottery = await commonPost('/app/jingyoujia/taskHallTurntable/extractTurntableGoods',{"activityId":queryTurntable.data.id})
+            if (lottery.code == 200) {
+                console.log(`抽奖获得：${lottery.data.awardName}`)
+            } else {
+                console.log(lottery.msg)
+            }
         }
-    }
-    //拍一拍赢好礼
-    console.log("————————————")
-    console.log("拍一拍赢好礼")
-    let queryIntegralAndTimes = await commonGet('/app/jingyoujia/beatSecondConfig/queryIntegralAndTimes?configId=1')
-    for (let i = 0; i < queryIntegralAndTimes.data.lastTimes; i++) {
-        let starGame = await commonPost('/app/jingyoujia/beatSecondConfig/starGame',{"gameId":1})
-        let endGame = await commonPost('/app/jingyoujia/beatSecondConfig/endGame',{"beatTime":"5.38","recordId":starGame.data})
-        if (endGame.code == 200) {
-            console.log(`抽奖获得：${endGame.data.integral}`)
-        } else {
-            console.log(endGame.msg)
+        //拍一拍赢好礼
+        console.log("————————————")
+        console.log("拍一拍赢好礼")
+        let queryIntegralAndTimes = await commonGet('/app/jingyoujia/beatSecondConfig/queryIntegralAndTimes?configId=1')
+        for (let i = 0; i < queryIntegralAndTimes.data.lastTimes; i++) {
+            let starGame = await commonPost('/app/jingyoujia/beatSecondConfig/starGame',{"gameId":1})
+            let endGame = await commonPost('/app/jingyoujia/beatSecondConfig/endGame',{"beatTime":"5.38","recordId":starGame.data})
+            if (endGame.code == 200) {
+                console.log(`抽奖获得：${endGame.data.integral}`)
+            } else {
+                console.log(endGame.msg)
+            }
         }
-    }
-    //拍拍春天
-    console.log("————————————")
-    console.log("拍拍春天")
-    let medicineDraw = await commonPost('/business/Mountain/medicineDraw',{"activityType":"MOUNTAIN_CLIMBING_2024","latitude":32.30181121826172,"longitude":118.31683349609375})
-    if (medicineDraw.code == 200) {
-        console.log(`抽奖获得：${medicineDraw.data.awardName}`)
-    } else {
-        console.log(medicineDraw.msg)
-    }
-    //劲牌春日登高会
-    console.log("————————————")
-    console.log("劲牌春日登高会")
-    //分享加次数
-    let addShareCount = await commonPost('/business/Mountain/addShareCount',{"taskCode":66})
-    //积分换次数
-    let addIntegralChance = await commonPost('/business/Mountain/addIntegralChance',{"taskCode":66})
-    let getAscendedChanceCount = await commonGet('/business/Mountain/getAscendedChanceCount')
-    for (let i = 0; i < getAscendedChanceCount.data.useCount; i++) {
-        let gameStart = await commonPost('/business/Mountain/gameStart',{"activityType":"MOUNTAIN_CLIMBING_2024","currentTime":await formattedDate(),"gameNo":66,"latitude":"32.30181121826172","longitude":"118.31683349609375"})
-        let gameDraw = await commonPost('/business/Mountain/gameDraw',{"activityType":"MOUNTAIN_CLIMBING_2024","recordNumber":580,"recordId":gameStart.data,"latitude":"32.30181121826172","longitude":"118.31683349609375","isIntegral":null})
-        if (gameDraw.code == 200) {
-            console.log(`抽奖获得：${gameDraw.data.awardName}`)
+        //拍拍春天
+        console.log("————————————")
+        console.log("拍拍春天")
+        let medicineDraw = await commonPost('/business/Mountain/medicineDraw',{"activityType":"MOUNTAIN_CLIMBING_2024","latitude":32.30181121826172,"longitude":118.31683349609375})
+        if (medicineDraw.code == 200) {
+            console.log(`抽奖获得：${medicineDraw.data.awardName}`)
         } else {
-            console.log(gameDraw.msg)
+            console.log(medicineDraw.msg)
         }
+        //劲牌春日登高会
+        console.log("————————————")
+        console.log("劲牌春日登高会")
+        //分享加次数
+        let addShareCount = await commonPost('/business/Mountain/addShareCount',{"taskCode":66})
+        //积分换次数
+        let addIntegralChance = await commonPost('/business/Mountain/addIntegralChance',{"taskCode":66})
+        let getAscendedChanceCount = await commonGet('/business/Mountain/getAscendedChanceCount')
+        for (let i = 0; i < getAscendedChanceCount.data.useCount; i++) {
+            let gameStart = await commonPost('/business/Mountain/gameStart',{"activityType":"MOUNTAIN_CLIMBING_2024","currentTime":await formattedDate(),"gameNo":66,"latitude":"32.30181121826172","longitude":"118.31683349609375"})
+            let gameDraw = await commonPost('/business/Mountain/gameDraw',{"activityType":"MOUNTAIN_CLIMBING_2024","recordNumber":580,"recordId":gameStart.data,"latitude":"32.30181121826172","longitude":"118.31683349609375","isIntegral":null})
+            if (gameDraw.code == 200) {
+                console.log(`抽奖获得：${gameDraw.data.awardName}`)
+            } else {
+                console.log(gameDraw.msg)
+            }
+        }
+        //问卷调查抽好礼
+        console.log("————————————")
+        console.log("问卷调查抽好礼")
+        let surveyDraw = await commonPost('/business/Mountain/surveyDraw',{"surveyType":"1","activityType":"MOUNTAIN_CLIMBING_2024","latitude":32.30181121826172,"longitude":118.31683349609375})
+        if (surveyDraw.code == 200) {
+            console.log(`抽奖获得：${surveyDraw.data.awardName}`)
+        } else {
+            console.log(surveyDraw.msg)
+        }
+        //点赞
+        let queryUgcExcellentTopicList = await commonGet('/app/ugcExcellent/queryUgcExcellentTopicList?pageNum=1&pageSize=10')
+        for (const topic of queryUgcExcellentTopicList.rows) {
+
+        }
+        let sendTopicLike = await commonPost('/app/jingyoujia/ugc/sendTopicLike',{"invokeType":1,"topicId":"1781360627026104320"})
+        if (sendTopicLike.code == 200) {
+            console.log(`点赞获得：${sendTopicLike.data.rewardNum}`)
+        } else {
+            console.log(sendTopicLike.msg)
+        }
+        //积分查询
+        console.log("————————————")
+        console.log("积分查询")
+        let queryCustIntegral = await commonGet('/app/jingyoujia/customer/queryCustIntegral')
+        console.log(`拥有积分：${queryCustIntegral.data}`)
+        $.msg($.name, `用户：${mobile}`, `拥有积分: ${queryCustIntegral.data}`);
     }
-    //问卷调查抽好礼
-    console.log("————————————")
-    console.log("问卷调查抽好礼")
-    let surveyDraw = await commonPost('/business/Mountain/surveyDraw',{"surveyType":"1","activityType":"MOUNTAIN_CLIMBING_2024","latitude":32.30181121826172,"longitude":118.31683349609375})
-    if (surveyDraw.code == 200) {
-        console.log(`抽奖获得：${surveyDraw.data.awardName}`)
-    } else {
-        console.log(surveyDraw.msg)
-    }
-    //积分查询
-    console.log("————————————")
-    console.log("积分查询")
-    let queryCustIntegral = await commonGet('/app/jingyoujia/customer/queryCustIntegral')
-    console.log(`拥有积分：${queryCustIntegral.data}`)
-    $.msg($.name, `用户：${mobile}`, `拥有积分: ${queryCustIntegral.data}`);
 }
 
 async function getCookie() {

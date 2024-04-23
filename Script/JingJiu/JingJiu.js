@@ -132,14 +132,10 @@ async function getCookie() {
         if (!$request.body) {
             return
         }
-        console.log(body.v1)
-        console.log(decrypt(body.v1))
-        $.setjson(JSON.parse(decrypt(body.v1)), "JingJiu_LatAndLon");
-        console.log('---')
         const body = $.toObj($request.body);
         console.log(body.v1)
         console.log(decrypt(body.v1))
-        $.setjson(JSON.parse(decrypt(body.v1)), "JingJiu_LatAndLon");
+        $.setjson(decrypt(body.v1)), "JingJiu_LatAndLon");
         $.msg($.name, `🎉经纬度更新成功!`, ``);
     } else {
         const token = $request.headers["Authorization"];

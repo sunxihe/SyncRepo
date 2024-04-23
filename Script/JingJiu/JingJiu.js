@@ -84,16 +84,22 @@ async function main() {
         } else {
             console.log(surveyDraw.msg)
         }
-        //点赞
         let queryUgcExcellentTopicList = await commonGet('/app/ugcExcellent/queryUgcExcellentTopicList?pageNum=1&pageSize=10')
         for (const topic of queryUgcExcellentTopicList.rows) {
-
-        }
-        let sendTopicLike = await commonPost('/app/jingyoujia/ugc/sendTopicLike',{"invokeType":1,"topicId":"1781360627026104320"})
-        if (sendTopicLike.code == 200) {
-            console.log(`点赞获得：${sendTopicLike.data.rewardNum}`)
-        } else {
-            console.log(sendTopicLike.msg)
+            //点赞
+            let sendTopicLike = await commonPost('/app/jingyoujia/ugc/sendTopicLike',{"invokeType":1,"topicId":topic.topicId})
+            if (sendTopicLike.code == 200) {
+                console.log(`点赞获得：${sendTopicLike.data.rewardNum}`)
+            } else {
+                console.log(sendTopicLike.msg)
+            }
+            //分享
+            let addForward = await commonPost('/app/jingyoujia/ugc/addForward',{"invokeType":1,"topicId":topic.topicId})
+            if (addForward.code == 200) {
+                console.log(`分享获得：${addForward.data.rewardNum}`)
+            } else {
+                console.log(addForward.msg)
+            }
         }
         //积分查询
         console.log("————————————")

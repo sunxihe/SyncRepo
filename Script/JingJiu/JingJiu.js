@@ -9,8 +9,8 @@ var key = CryptoJS.enc.Utf8.parse("Z0J7M480h6kppf67");
     if (typeof $request != "undefined") {
         await getCookie();
     } else {
-        lat = JingJiu_LatAndLon.lat
-        lon = JingJiu_LatAndLon.lon
+        lat = JSON.parse(JingJiu_LatAndLon).lat
+        lon = JSON.parse(JingJiu_LatAndLon).lon
         await main();
     }
 })().catch((e) => {$.log(e)}).finally(() => {$.done({});});

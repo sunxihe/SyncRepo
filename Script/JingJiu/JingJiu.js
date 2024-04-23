@@ -1,14 +1,16 @@
 const $ = new Env('劲酒');
 let JingJiu = ($.isNode() ? process.env.JingJiu : $.getjson("JingJiu")) || [];
 let JingJiu_LatAndLon = ($.isNode() ? process.env.JingJiu_LatAndLon : $.getjson("JingJiu_LatAndLon")) || {};
-let lat = JingJiu_LatAndLon.lat
-let lon = JingJiu_LatAndLon.lon
+let lat;
+let lon;
 const CryptoJS = createCryptoJS()
 var key = CryptoJS.enc.Utf8.parse("Z0J7M480h6kppf67");
 !(async () => {
     if (typeof $request != "undefined") {
         await getCookie();
     } else {
+        lat = JingJiu_LatAndLon.lat
+        lon = JingJiu_LatAndLon.lon
         await main();
     }
 })().catch((e) => {$.log(e)}).finally(() => {$.done({});});

@@ -83,7 +83,7 @@ async function main() {
         for (let i = 0; i < login.result.GameCount; i++) {
             let login = await commonPost("Login",`UID=${userId}`)
             console.log(login)
-            let GameRecord = await commonPost("GameRecord",`UID=${userId}&Difficulty=${login.result.Difficulty + 1}&IsSuccess=1&ActivityTimeID=106`)
+            let GameRecord = await commonPost("GameRecord",`UID=${userId}&Difficulty=${Number(login.result.Difficulty) + 1}&IsSuccess=1&ActivityTimeID=106`)
             console.log(GameRecord)
             let Luckdraw = await commonPost("Luckdraw",`UID=${userId}&ActivityTimeID=106`)
             console.log(Luckdraw)

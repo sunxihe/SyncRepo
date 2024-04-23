@@ -87,14 +87,14 @@ async function main() {
         let queryUgcExcellentTopicList = await commonGet('/app/ugcExcellent/queryUgcExcellentTopicList?pageNum=1&pageSize=10')
         for (const topic of queryUgcExcellentTopicList.rows) {
             //点赞
-            let sendTopicLike = await commonPost('/app/jingyoujia/ugc/sendTopicLike',{"invokeType":1,"topicId":topic.topicId})
+            let sendTopicLike = await nocryptPost('/app/jingyoujia/ugc/sendTopicLike',{"invokeType":1,"topicId":topic.topicId})
             if (sendTopicLike.code == 200) {
                 console.log(`点赞获得：${sendTopicLike.data.rewardNum}`)
             } else {
                 console.log(sendTopicLike.msg)
             }
             //分享
-            let addForward = await commonPost('/app/jingyoujia/ugc/addForward',{"invokeType":1,"topicId":topic.topicId})
+            let addForward = await nocryptPost('/app/jingyoujia/ugc/addForward',{"invokeType":1,"topicId":topic.topicId})
             if (addForward.code == 200) {
                 console.log(`分享获得：${addForward.data.rewardNum}`)
             } else {
@@ -136,6 +136,44 @@ async function getCookie() {
         $.msg($.name, `🎉新增用户${newData.mobile}成功!`, ``);
     }
     $.setjson(JingJiu, "JingJiu");
+}
+
+async function nocryptPost(url,body) {
+    return new Promise(resolve => {
+        const options = {
+            url: `https://jjw.jingjiu.com/app-jingyoujia${url}`,
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'xweb_xhr': '1',
+                'appid': 'wx10bc773e0851aedd',
+                'authorization': token,
+                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) XWEB/9117',
+                'content-type': 'application/json',
+                'sec-fetch-site': 'cross-site',
+                'sec-fetch-mode': 'cors',
+                'Sec-Fetch-Dest': 'empty',
+                'referer': 'https://servicewechat.com/wx10bc773e0851aedd/606/page-frame.html',
+                'accept-encoding': 'gzip, deflate, br',
+                'accept-language': 'zh-CN,zh;q=0.9',
+            },
+            body: JSON.stringify(body),
+        }
+        $.post(options, async (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`${$.name} API请求失败，请检查网路重试`)
+                } else {
+                    await $.wait(2000)
+                    resolve(JSON.parse(data));
+                }
+            } catch (e) {
+                $.logErr(e, resp)
+            } finally {
+                resolve();
+            }
+        })
+    })
 }
 
 async function commonPost(url,body) {

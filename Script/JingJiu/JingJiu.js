@@ -281,7 +281,7 @@ async function commonGet(url,body) {
     })
 }
 
-function formattedDate() {
+async function formattedDate() {
     let date = new Date();
     let year = date.getFullYear();
     let month = ("0" + (date.getMonth() + 1)).slice(-2);
@@ -293,7 +293,7 @@ function formattedDate() {
 
 }
 
-async function decrypt(text) {
+function decrypt(text) {
     var encrypted = CryptoJS.enc.Base64.parse(text);
     var decrypted = CryptoJS.AES.decrypt({ ciphertext: encrypted }, key, {
         mode: CryptoJS.mode.ECB,

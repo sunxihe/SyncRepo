@@ -1,4 +1,7 @@
 const $ = new Env("蒙牛超级会员");
+let id = ''
+let Authorization = ''
+let activeid = '64faa53e8844970001e64920'
 const CryptoJS = createCryptoJS()
 let MengNiu = ($.isNode() ? process.env.MengNiu : $.getjson("MengNiu")) || [];
 let timestamp = Math.round(new Date().getTime() / 1000).toString();
@@ -31,6 +34,47 @@ async function main() {
         let taskList = await mcommonPost("/xcx/m/mytask",encrypt({"token":token,"b":2617,"lat":"","lng":""}))
         for (const task of taskList.data) {
             console.log(`任务：${task.title} id：${task.id} 奖励：${task.value}`)
+        }
+        //快乐连蒙
+        console.log("————————————")
+        console.log("快乐连蒙")
+        let gameLogin = await mcommonPost("/xcx/open/game_login",encrypt({"game_type":"SpeedLinkup","share_params":{"type":"SpeedLinkup"},"open_id":"oSRTN4kuq6xcFgHUHMvdbgaRuF58","token":token,"b":2617,"lng":"118.3471240234375","lat":"32.3110400390625"}))
+        const urlStr = gameLogin.data.login_link.split('?')[1];
+        let result = {};
+        let paramsArr = urlStr.split('&')
+        for(let i = 0,len = paramsArr.length;i < len;i++){
+            let arr = paramsArr[i].split('=')
+            result[arr[0]] = arr[1];
+        }
+        let Code2 = {"uid":`${userId}`,"lng":"118.3471240234375","lat":"32.3110400390625"}
+        let login1 = await commonPost1("/user/login",{"Code":result.code,"Code2":JSON.stringify(Code2),"activeid":activeid,"channel":"40"})
+        Authorization = login1.token
+        id = login1.id
+        let taskList1 = await commonPost1('/task/user/v1/list',{"roleId":id,"sActiveId":activeid,"taskGroup":1})
+        for (const task of taskList1.task) {
+            console.log(`任务：${task.name} id：${task.taskId}`)
+            if (task.refreshCycles[0].curRefreshValue <= task.refreshCycles[0].maxRefreshTimes && task.taskId == "T201") {
+                //let doEventTask = await commonPost('/task/user/v1/doEventTask',{"taskId":"T201","opValue":1,"opType":"add","group":null,"sActiveId":activeid,"roleId":id,"fromClient":true,"judgeValue":null})
+                //console.log(doEventTask)
+            }
+            if (task.refreshCycles[0].curRefreshValue < task.refreshCycles[0].maxRefreshTimes && task.taskId == "T003") {
+                for (let i = task.refreshCycles[0].curRefreshValue; i < task.refreshCycles[0].maxRefreshTimes; i++) {
+                    let decUserItem = await commonPost1('/item/user/v1/decUserItem',{"sActiveId":activeid,"sUserId":id,"sItemId":"d004","iCount":10,"params":"","negative":false})
+                    console.log(decUserItem)
+                    let finishTask = await commonPost1('/task/user/v1/finishTask',{"taskId":task.taskId,"sActiveId":activeid,"roleId":id})
+                    console.log(finishTask)
+                }
+            }
+        }
+        console.log("————————————")
+        console.log("开始游戏")
+        login1.serverTime = Date.now()
+        let logincheck = await commonPost1("/game/game/local/logincheck",{"activeid":activeid,"info":login1})
+        for (let i = 0; i < logincheck.role.gameChance; i++) {
+            let startgame = await commonPost1('/game/game/local/startgame',{"activeId":activeid,"gameId":logincheck.role.gameId})
+            console.log(startgame.singleGameLock)
+            let endGameByMengniu = await commonPost1('/game/game/local/endGameByMengniu',{"activeId":activeid,"gameId":logincheck.role.gameId,"singleGameLock":startgame.singleGameLock,"score":14.547999999998833})
+            console.log(`获得：${endGameByMengniu.platInfo.res.awardName}`)
         }
         //画龙领福气
         console.log("————————————")
@@ -112,6 +156,45 @@ async function getCookie() {
         $.msg($.name, `🎉新增用户${newData.userId}成功!`, ``);
     }
     $.setjson(MengNiu, "MengNiu");
+}
+
+async function commonPost1(url,body) {
+    return new Promise(resolve => {
+        const options = {
+            url: `https://hserver.moxigame.cn/istio/grpc-gate${url}`,
+            headers: {
+                'Accept': '*/*',
+                'encode': 'false',
+                'uid': id,
+                'Authorization': Authorization,
+                'sec-fetch-site': 'same-site',
+                'accept-language': 'zh-CN,zh-Hans;q=0.9',
+                'accept-encoding': 'gzip, deflate, br',
+                'sec-fetch-mode': 'cors',
+                'Content-Type': 'application/json;charset=utf-8',
+                'origin': 'https://game-cdn.moxigame.cn',
+                'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.47(0x18002f2c) NetType/4G Language/zh_CN miniProgram/wxba9855bdb1a45c8e',
+                'Connection': 'keep-alive',
+                'Sec-Fetch-Dest': 'empty'
+            },
+            body: JSON.stringify(body),
+        }
+        $.post(options, async (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`${$.name} API请求失败，请检查网路重试`)
+                } else {
+                    await $.wait(2000)
+                    resolve(JSON.parse(data));
+                }
+            } catch (e) {
+                $.logErr(e, resp)
+            } finally {
+                resolve();
+            }
+        })
+    })
 }
 
 async function commonPost(url,body) {

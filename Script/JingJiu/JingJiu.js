@@ -101,6 +101,22 @@ async function main() {
                 console.log(addForward.msg)
             }
         }
+        //健康打卡
+        console.log("————————————")
+        console.log("健康打卡")
+        let photoPunch = await nocryptPost('/app/jingyoujia/activityCommon/photoPunch',{"activityType":"MOUNTAIN_CLIMBING_2024","recordUrl":"https://jjw-oos.jingjiu.com/jingyoujia/2024/04/23/171388059288626.png","latitude":32.30181121826172,"longitude":118.31683349609375,"code":"xogfmloy"})
+        if (photoPunch.code == 200) {
+            console.log(`${photoPunch.data.recordTotalNumber}`)
+        } else {
+            console.log(photoPunch.msg)
+        }
+        let existAwardPop = await commonGet('/app/jingyoujia/activityCommon/existAwardPop?activityType=MOUNTAIN_CLIMBING_2024')
+        if (existAwardPop.code == 200) {
+            console.log(`获得：${existAwardPop.data.winningName}`)
+        } else {
+            console.log(existAwardPop.msg)
+        }
+        continue
         //积分查询
         console.log("————————————")
         console.log("积分查询")

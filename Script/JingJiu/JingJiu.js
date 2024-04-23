@@ -127,31 +127,41 @@ async function main() {
 }
 
 async function getCookie() {
-    const token = $request.headers["Authorization"];
-    if (!token) {
-        return
-    }
-    const body = $.toObj($response.body);
-    if (!body.data || !body.data.mobile) {
-        return
-    }
-    const mobile = body.data.mobile;
-    const newData = {"mobile": mobile, "token": token}
-    const index = JingJiu.findIndex(e => e.mobile == newData.mobile);
-    if (index !== -1) {
-        if (JingJiu[index].token == newData.token) {
+    if ($request.url.includes('getUserLocationPoint')) {
+        if (!$request.body) {
             return
-        } else {
-            JingJiu[index] = newData;
-            console.log(newData.token)
-            $.msg($.name, `🎉用户${newData.mobile}更新token成功!`, ``);
         }
+        const body = $.toObj($request.body);
+        console.log(decrypt(body.v1))
+        $.setjson(JSON.parse(decrypt(body.v1)), "JingJiu_LatAndLon");
+        $.msg($.name, `🎉经纬度更新成功!`, ``);
     } else {
-        JingJiu.push(newData)
-        console.log(newData.token)
-        $.msg($.name, `🎉新增用户${newData.mobile}成功!`, ``);
+        const token = $request.headers["Authorization"];
+        if (!token) {
+            return
+        }
+        const body = $.toObj($response.body);
+        if (!body.data || !body.data.mobile) {
+            return
+        }
+        const mobile = body.data.mobile;
+        const newData = {"mobile": mobile, "token": token}
+        const index = JingJiu.findIndex(e => e.mobile == newData.mobile);
+        if (index !== -1) {
+            if (JingJiu[index].token == newData.token) {
+                return
+            } else {
+                JingJiu[index] = newData;
+                console.log(newData.token)
+                $.msg($.name, `🎉用户${newData.mobile}更新token成功!`, ``);
+            }
+        } else {
+            JingJiu.push(newData)
+            console.log(newData.token)
+            $.msg($.name, `🎉新增用户${newData.mobile}成功!`, ``);
+        }
+        $.setjson(JingJiu, "JingJiu");
     }
-    $.setjson(JingJiu, "JingJiu");
 }
 
 async function nocryptPost(url,body) {
@@ -279,6 +289,15 @@ async function formattedDate() {
     let seconds = ("0" + date.getSeconds()).slice(-2);
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
+}
+
+async function decrypt(text) {
+    var encrypted = CryptoJS.enc.Base64.parse(text);
+    var decrypted = CryptoJS.AES.decrypt({ ciphertext: encrypted }, key, {
+        mode: CryptoJS.mode.ECB,
+        padding: CryptoJS.pad.Pkcs7
+    });
+    return decrypted.toString(CryptoJS.enc.Utf8);
 }
 
 async function encrypt(text) {

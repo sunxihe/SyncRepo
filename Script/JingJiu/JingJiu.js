@@ -31,7 +31,11 @@ async function main() {
     let lotteryNumbers = await commonGet(`/app/jingyoujia/taskHallTurntable/getUserLotteryNumbers?activityId=${queryTurntable.data.id}`)
     for (let i = 0; i < lotteryNumbers.data.userLotteryNumbers; i++) {
         let lottery = await commonPost('/app/jingyoujia/taskHallTurntable/extractTurntableGoods',{"activityId":queryTurntable.data.id})
-        console.log(`抽奖获得：${lottery.data.awardName}`)
+        if (lottery.code == 200) {
+            console.log(`抽奖获得：${lottery.data.awardName}`)
+        } else {
+            console.log(lottery.msg)
+        }
     }
     //拍一拍赢好礼
     console.log("————————————")

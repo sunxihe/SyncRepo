@@ -119,7 +119,6 @@ async function main() {
         } else {
             console.log(existAwardPop.msg)
         }
-        continue
         //积分查询
         console.log("————————————")
         console.log("积分查询")

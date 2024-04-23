@@ -281,7 +281,7 @@ async function commonGet(url,body) {
     })
 }
 
-async function formattedDate() {
+function formattedDate() {
     let date = new Date();
     let year = date.getFullYear();
     let month = ("0" + (date.getMonth() + 1)).slice(-2);

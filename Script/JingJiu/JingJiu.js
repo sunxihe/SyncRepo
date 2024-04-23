@@ -127,13 +127,17 @@ async function main() {
 }
 
 async function getCookie() {
-    console.log($request.url)
     if ($request.url.includes('getUserLocationPoint')) {
         console.log($request.body)
         if (!$request.body) {
             return
         }
+        console.log(body.v1)
+        console.log(decrypt(body.v1))
+        $.setjson(JSON.parse(decrypt(body.v1)), "JingJiu_LatAndLon");
+        console.log('---')
         const body = $.toObj($request.body);
+        console.log(body.v1)
         console.log(decrypt(body.v1))
         $.setjson(JSON.parse(decrypt(body.v1)), "JingJiu_LatAndLon");
         $.msg($.name, `🎉经纬度更新成功!`, ``);

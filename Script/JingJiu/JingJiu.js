@@ -82,6 +82,12 @@ async function main() {
     } else {
         console.log(surveyDraw.msg)
     }
+    //积分查询
+    console.log("————————————")
+    console.log("积分查询")
+    let queryCustIntegral = await commonGet('/app/jingyoujia/customer/queryCustIntegral')
+    console.log(`拥有积分：${queryCustIntegral.data}`)
+    $.msg($.name, `用户：${mobile}`, `拥有积分: ${queryCustIntegral.data}`);
 }
 
 async function getCookie() {

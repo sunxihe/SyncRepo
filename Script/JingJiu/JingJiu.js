@@ -107,7 +107,7 @@ async function main() {
         //健康打卡
         console.log("————————————")
         console.log("健康打卡")
-        let photoPunch = await nocryptPost('/app/jingyoujia/activityCommon/photoPunch',{"activityType":"MOUNTAIN_CLIMBING_2024","recordUrl":"https://jjw-oos.jingjiu.com/jingyoujia/2024/04/23/171388059288626.png","latitude":lat,"longitude":lon,"code":"xogfmloy"})
+        let photoPunch = await nocryptPost('/app/jingyoujia/activityCommon/photoPunch',{"activityType":"MOUNTAIN_CLIMBING_2024","recordUrl":"https://raw.githubusercontent.com/xzxxn777/Surge/main/Script/JingJiu/Sign.jpg","latitude":lat,"longitude":lon,"code":"xogfmloy"})
         if (photoPunch.code == 200) {
             console.log(`${photoPunch.data.recordTotalNumber}`)
         } else {

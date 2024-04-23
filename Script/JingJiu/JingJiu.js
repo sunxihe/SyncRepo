@@ -35,6 +35,9 @@ async function main() {
             let lottery = await commonPost('/app/jingyoujia/taskHallTurntable/extractTurntableGoods',{"activityId":queryTurntable.data.id})
             if (lottery.code == 200) {
                 console.log(`抽奖获得：${lottery.data.awardName}`)
+                if (lottery.data.awardType != 4 && lottery.data.awardName) {
+                    $.msg($.name, `用户：${mobile}`, `抽奖获得: ${lottery.data.awardName}`);
+                }
             } else {
                 console.log(lottery.msg)
             }
@@ -58,6 +61,9 @@ async function main() {
         let medicineDraw = await commonPost('/business/Mountain/medicineDraw',{"activityType":"MOUNTAIN_CLIMBING_2024","latitude":lat,"longitude":lon})
         if (medicineDraw.code == 200) {
             console.log(`抽奖获得：${medicineDraw.data.awardName}`)
+            if (medicineDraw.data.awardType != 4 && medicineDraw.data.awardName) {
+                $.msg($.name, `用户：${mobile}`, `抽奖获得: ${medicineDraw.data.awardName}`);
+            }
         } else {
             console.log(medicineDraw.msg)
         }
@@ -74,19 +80,25 @@ async function main() {
             let gameDraw = await commonPost('/business/Mountain/gameDraw',{"activityType":"MOUNTAIN_CLIMBING_2024","recordNumber":580,"recordId":gameStart.data,"latitude":lat,"longitude":lon,"isIntegral":null})
             if (gameDraw.code == 200) {
                 console.log(`抽奖获得：${gameDraw.data.awardName}`)
+                if (gameDraw.data.awardType != 4 && gameDraw.data.awardName) {
+                    $.msg($.name, `用户：${mobile}`, `抽奖获得: ${gameDraw.data.awardName}`);
+                }
             } else {
                 console.log(gameDraw.msg)
             }
         }
         //问卷调查抽好礼
-        console.log("————————————")
-        console.log("问卷调查抽好礼")
-        let surveyDraw = await commonPost('/business/Mountain/surveyDraw',{"surveyType":"1","activityType":"MOUNTAIN_CLIMBING_2024","latitude":lat,"longitude":lon})
-        if (surveyDraw.code == 200) {
-            console.log(`抽奖获得：${surveyDraw.data.awardName}`)
-        } else {
-            console.log(surveyDraw.msg)
-        }
+        // console.log("————————————")
+        // console.log("问卷调查抽好礼")
+        // let surveyDraw = await commonPost('/business/Mountain/surveyDraw',{"surveyType":"1","activityType":"MOUNTAIN_CLIMBING_2024","latitude":lat,"longitude":lon})
+        // if (surveyDraw.code == 200) {
+        //     console.log(`抽奖获得：${surveyDraw.data.awardName}`)
+        //     if (surveyDraw.data.awardType != 4 && surveyDraw.data.awardName) {
+        //         $.msg($.name, `用户：${mobile}`, `抽奖获得: ${surveyDraw.data.awardName}`);
+        //     }
+        // } else {
+        //     console.log(surveyDraw.msg)
+        // }
         let queryUgcExcellentTopicList = await commonGet('/app/ugcExcellent/queryUgcExcellentTopicList?pageNum=1&pageSize=10')
         for (const topic of queryUgcExcellentTopicList.rows) {
             //点赞
@@ -116,6 +128,9 @@ async function main() {
         let existAwardPop = await commonGet('/app/jingyoujia/activityCommon/existAwardPop?activityType=MOUNTAIN_CLIMBING_2024')
         if (existAwardPop.code == 200) {
             console.log(`获得：${existAwardPop.data.winningName}`)
+            if (existAwardPop.data.awardType != 4 && existAwardPop.data.winningName) {
+                $.msg($.name, `用户：${mobile}`, `抽奖获得: ${existAwardPop.data.winningName}`);
+            }
         } else {
             console.log(existAwardPop.msg)
         }

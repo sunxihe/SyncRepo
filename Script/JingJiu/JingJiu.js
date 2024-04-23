@@ -127,7 +127,9 @@ async function main() {
 }
 
 async function getCookie() {
+    console.log($request.url)
     if ($request.url.includes('getUserLocationPoint')) {
+        console.log($request.body)
         if (!$request.body) {
             return
         }

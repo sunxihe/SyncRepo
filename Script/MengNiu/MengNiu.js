@@ -10,6 +10,28 @@ var iv = md5(t + timestamp + 'tMFw=RXrEF7y^=7QXy2h2C_g_^').toString().substring(
 iv = CryptoJS.enc.Utf8.parse(iv);
 var key = md5('tMFw=RXrEF7y^=7QXy2h2C_g_^' + t + timestamp).toString().substring(8, 24)
 key = CryptoJS.enc.Utf8.parse(key);
+const USER_AGENTS =
+        ['Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) XWEB/9117',
+        'Mozilla/5.0 (Windows; U; Windows NT 5.0) AppleWebKit/534.29.4 (KHTML, like Gecko) Version/5.1 Safari/534.29.4',
+        'Mozilla/5.0 (Windows NT 4.0; nds-DE; rv:1.9.2.20) Gecko/2011-03-05 13:13:14 Firefox/3.8',
+        'Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/5.1)',
+        'Mozilla/5.0 (compatible; MSIE 8.0; Windows 98; Win 9x 4.90; Trident/5.1)',
+        'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/533.1 (KHTML, like Gecko) Chrome/53.0.857.0 Safari/533.1',
+        'Mozilla/5.0 (Windows NT 4.0; ia-FR; rv:1.9.0.20) Gecko/2012-01-23 00:32:34 Firefox/3.8',
+        'Mozilla/5.0 (Windows NT 5.0; nl-NL; rv:1.9.1.20) Gecko/2017-12-18 16:56:00 Firefox/3.8',
+        'Mozilla/5.0 (Windows; U; Windows NT 6.1) AppleWebKit/532.39.3 (KHTML, like Gecko) Version/5.1 Safari/532.39.3',
+        'Mozilla/5.0 (Windows; U; Windows NT 5.01) AppleWebKit/535.14.7 (KHTML, like Gecko) Version/4.1 Safari/535.14.7',
+        'Mozilla/5.0 (Windows 98) AppleWebKit/536.2 (KHTML, like Gecko) Chrome/38.0.862.0 Safari/536.2', '',
+        'Mozilla/5.0 (Windows NT 6.0) AppleWebKit/531.2 (KHTML, like Gecko) Chrome/35.0.832.0 Safari/531.2',
+        'Mozilla/5.0 (Windows 98; Win 9x 4.90) AppleWebKit/536.1 (KHTML, like Gecko) Chrome/52.0.821.0 Safari/536.1',
+        'Mozilla/5.0 (Windows; U; Windows NT 5.0) AppleWebKit/534.17.3 (KHTML, like Gecko) Version/5.0.5 Safari/534.17.3',
+        'Mozilla/5.0 (Windows; U; Windows 98) AppleWebKit/531.40.6 (KHTML, like Gecko) Version/4.0 Safari/531.40.6',
+        'Mozilla/5.0 (Windows; U; Windows CE) AppleWebKit/531.13.2 (KHTML, like Gecko) Version/5.0.3 Safari/531.13.2',
+        'Mozilla/5.0 (Windows; U; Windows NT 5.2) AppleWebKit/531.7.6 (KHTML, like Gecko) Version/4.0.5 Safari/531.7.6',
+        'Mozilla/5.0 (Windows; U; Windows NT 10.0) AppleWebKit/532.23.7 (KHTML, like Gecko) Version/5.0.5 Safari/532.23.7',
+        'Mozilla/5.0 (Windows; U; Windows NT 5.01) AppleWebKit/535.14.7 (KHTML, like Gecko) Version/4.1 Safari/535.14.7',
+        'Mozilla/5.0 (Windows 95) AppleWebKit/533.1 (KHTML, like Gecko) Chrome/15.0.822.0 Safari/533.1']
+const USER_AGENT = USER_AGENTS[randomNumber(0, USER_AGENTS.length)];
 !(async () => {
     if (typeof $request != "undefined") {
         await getCookie();
@@ -200,7 +222,7 @@ async function commonPost1(url,body) {
                 'sec-fetch-mode': 'cors',
                 'Content-Type': 'application/json;charset=utf-8',
                 'origin': 'https://game-cdn.moxigame.cn',
-                'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.47(0x18002f2c) NetType/4G Language/zh_CN miniProgram/wxba9855bdb1a45c8e',
+                'User-Agent': USER_AGENT,
                 'Connection': 'keep-alive',
                 'Sec-Fetch-Dest': 'empty'
             },
@@ -237,7 +259,7 @@ async function commonPost(url,body) {
                 "Sec-Fetch-Mode": "cors",
                 "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
                 "Origin": "https://drawdragon.beats-digital.com",
-                "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.47(0x18002f2c) NetType/WIFI Language/zh_CN miniProgram/wx2e7a6973da6a1b54",
+                "User-Agent": USER_AGENT,
                 "Referer": "https://drawdragon.beats-digital.com/?uid=49680260&lng=118.34707763671875&lat=32.31099717881944",
                 "Connection": "keep-alive",
                 "Sec-Fetch-Dest": "empty"
@@ -279,7 +301,7 @@ async function mcommonPost(url,encode) {
                 "deviceOrientation": "portrait",
                 "model": "iPhone 14 Pro<iPhone15,2>",
                 "Accept-Encoding": "gzip,compress,br,deflate",
-                "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.47(0x18002f2c) NetType/WIFI Language/zh_CN",
+                "User-Agent": USER_AGENT,
                 "Referer": "https://servicewechat.com/wx2e7a6973da6a1b54/1318/page-frame.html",
                 "Connection": "keep-alive"
             },
@@ -302,6 +324,11 @@ async function mcommonPost(url,encode) {
         })
     })
 }
+
+function randomNumber(min = 0, max = 100) {
+    return Math.min(Math.floor(min + Math.random() * (max - min)), max);
+}
+
 function encrypt(word) {
     var srcs = CryptoJS.enc.Utf8.parse(JSON.stringify(word));
     var encrypted = CryptoJS.AES.encrypt(srcs, key, {

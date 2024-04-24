@@ -37,7 +37,11 @@ async function main() {
                 if (task.id == 14) {
                     for (let i = 0; i < (task.rewardLimit - task.singleReward)/5; i++) {
                         let posts = await commonPost(`/posts`,{"topicNames":["进来笑一个"],"content":"护士：你今天有福了，梁老板亲自给你做检查熊顿：梁医生？为什么叫他老板？护士：因为他老板着脸——《滚蛋吧！肿瘤君》","medias":["https://static.xinc818.com/console/console/28fc4bbb-2678-4957-a619-099898894145.png"],"groupId":0,"groupClassifyId":0,"attachments":[{"enumType":1,"url":"https://static.xinc818.com/console/console/28fc4bbb-2678-4957-a619-099898894145.png"}],"voteType":0,"commentType":"0","dailyTaskId":task.id,"platform":"windows","sid":1713957614844})
-                        console.log(`任务完成,获得：${posts.data.singleReward}`)
+                        if (posts.code == 0) {
+                            console.log(`任务完成,获得：${posts.data.singleReward}`)
+                        } else {
+                            console.log(posts.msg)
+                        }
                     }
                 }
                 //参与讨论

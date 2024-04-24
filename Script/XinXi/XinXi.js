@@ -128,7 +128,7 @@ async function main() {
         console.log("大转盘")
         let freeNum = await commonGet("/lottery/65/freeNum")
         for (let i = 0; i < freeNum.data; i++) {
-            let draw = await commonGet("/lottery/draw")
+            let draw = await commonPost("/lottery/draw",{"activityId":65,"batch":false,"isIntegral":false,"userId":id,"dailyTaskId":9})
             console.log(draw)
         }
         //走路赢麻了

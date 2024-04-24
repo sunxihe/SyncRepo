@@ -50,6 +50,23 @@ async function main() {
         let login1 = await commonPost1("/user/login",{"Code":result.code,"Code2":JSON.stringify(Code2),"activeid":activeid,"channel":"40"})
         Authorization = login1.token
         id = login1.id
+
+        console.log("开始游戏")
+        login1.serverTime = Date.now()
+        let logincheck = await commonPost1("/game/game/local/logincheck",{"activeid":activeid,"info":login1})
+        let code = 0
+        while (code == 0) {
+            let startgame = await commonPost1('/game/game/local/startgame',{"activeId":activeid,"gameId":logincheck.role.gameId})
+            //console.log(startgame.singleGameLock)
+            let endGameByMengniu = await commonPost1('/game/game/local/endGameByMengniu',{"activeId":activeid,"gameId":logincheck.role.gameId,"singleGameLock":startgame.singleGameLock,"score":14.547999999998833})
+            if (endGameByMengniu.code == 0) {
+                console.log(`获得：${endGameByMengniu.platInfo.res.awardName}`)
+            } else {
+                console.log(endGameByMengniu.errMsg)
+            }
+            code = endGameByMengniu.code
+        }
+        console.log("开始任务")
         let taskList1 = await commonPost1('/task/user/v1/list',{"roleId":id,"sActiveId":activeid,"taskGroup":1})
         for (const task of taskList1.task) {
             console.log(`任务：${task.name} id：${task.taskId}`)
@@ -66,15 +83,17 @@ async function main() {
                 }
             }
         }
-        console.log("————————————")
-        console.log("开始游戏")
-        login1.serverTime = Date.now()
-        let logincheck = await commonPost1("/game/game/local/logincheck",{"activeid":activeid,"info":login1})
-        for (let i = 0; i < logincheck.role.gameChance; i++) {
+        code = 0
+        while (code == 0) {
             let startgame = await commonPost1('/game/game/local/startgame',{"activeId":activeid,"gameId":logincheck.role.gameId})
             console.log(startgame.singleGameLock)
             let endGameByMengniu = await commonPost1('/game/game/local/endGameByMengniu',{"activeId":activeid,"gameId":logincheck.role.gameId,"singleGameLock":startgame.singleGameLock,"score":14.547999999998833})
-            console.log(`获得：${endGameByMengniu.platInfo.res.awardName}`)
+            if (endGameByMengniu.code == 0) {
+                console.log(`获得：${endGameByMengniu.platInfo.res.awardName}`)
+            } else {
+                console.log(endGameByMengniu.errMsg)
+            }
+            code = endGameByMengniu.code
         }
         //画龙领福气
         console.log("————————————")
@@ -84,13 +103,21 @@ async function main() {
             let login = await commonPost("Login",`UID=${userId}`)
             console.log(login)
             let GameRecord = await commonPost("GameRecord",`UID=${userId}&Difficulty=${Number(login.result.Difficulty) + 1}&IsSuccess=1&ActivityTimeID=106`)
-            console.log(GameRecord)
+            //console.log(GameRecord)
             let Luckdraw = await commonPost("Luckdraw",`UID=${userId}&ActivityTimeID=106`)
-            console.log(Luckdraw)
+            if (Luckdraw.errcode == 0) {
+                console.log(`获得：${Luckdraw.result.PrizeName}`)
+            } else {
+                console.log(Luckdraw.errmsg)
+            }
         }
         //抽奖多一次
         let Luckdraw = await commonPost("Luckdraw",`UID=${userId}&ActivityTimeID=106`)
-        console.log(Luckdraw)
+        if (Luckdraw.errcode == 0) {
+            console.log(`获得：${Luckdraw.result.PrizeName}`)
+        } else {
+            console.log(Luckdraw.errmsg)
+        }
         //狂欢派兑
         console.log("————————————")
         console.log("开始狂欢派兑抽奖")

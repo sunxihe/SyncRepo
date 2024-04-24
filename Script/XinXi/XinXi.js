@@ -16,6 +16,10 @@ async function main() {
         //签到
         console.log("开始签到")
         let sign = await commonGet("/sign/in?dailyTaskId=")
+        if (sign.code != 0) {
+            $.msg($.name, `用户：${id}`, `token已过期，请重新获取`);
+            continue
+        }
         if (sign.data.flag) {
             console.log(`签到成功,获得: ${sign.data.integral}`)
         } else {
@@ -48,10 +52,12 @@ async function main() {
                     for (let sort of sorts.data.list) {
                         while (count > 0) {
                             let follow = await commonPut(`/user/follow`,{"followUserId":sort.publisherId,"decision":true})
-                            console.log(`点赞成功,获得：${follow.data.singleReward}`)
+                            if (follow.data) {
+                                console.log(`点赞成功,获得：${follow.data.singleReward}`)
+                                count--
+                            }
                             let unFollow = await commonPut(`/user/follow`,{"followUserId":sort.publisherId,"decision":false})
                             console.log(`取消点赞成功`)
-                            count--
                         }
                     }
                 }

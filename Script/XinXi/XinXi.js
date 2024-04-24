@@ -42,6 +42,7 @@ async function main() {
                         } else {
                             console.log(posts.msg)
                         }
+                        await $.wait(5000);
                     }
                 }
                 //参与讨论

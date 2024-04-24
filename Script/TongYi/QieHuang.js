@@ -308,11 +308,14 @@ async function main() {
                         console.log(`拜访成功`)
                         console.log("触发滑块验证")
                         let data = stealGold.data.slideImgInfo;
-                        let getXpos = await slidePost({'gap': data.slidingImage, 'bg': data.backImage})
+                        let getXpos = await slidePost('huakuai.xzxxn7.live',{'gap': data.slidingImage, 'bg': data.backImage})
                         if (!getXpos) {
-                            console.log("滑块验证服务不在运行，请联系作者")
-                            $.msg($.name, `滑块验证服务不在运行，请联系作者`);
-                            break
+                            getXpos = await slidePost('107.22.24.202:9999',{'gap': data.slidingImage, 'bg': data.backImage})
+                            if (!getXpos) {
+                                console.log("滑块验证服务不在运行，请联系作者")
+                                $.msg($.name, `滑块验证服务不在运行，请联系作者`);
+                                break
+                            }
                         }
                         console.log(getXpos)
                         let checkUserCapCode = await commonPost(`/checkUserCapCode`,{"xpos":getXpos.x_coordinate})
@@ -351,11 +354,14 @@ async function main() {
                         }
                         console.log("触发滑块验证")
                         let data = draw.data.slideImgInfo;
-                        let getXpos = await slidePost({'gap': data.slidingImage, 'bg': data.backImage})
+                        let getXpos = await slidePost('huakuai.xzxxn7.live',{'gap': data.slidingImage, 'bg': data.backImage})
                         if (!getXpos) {
-                            console.log("滑块验证服务不在运行，请联系作者")
-                            $.msg($.name, `滑块验证服务不在运行，请联系作者`);
-                            break
+                            getXpos = await slidePost('107.22.24.202:9999',{'gap': data.slidingImage, 'bg': data.backImage})
+                            if (!getXpos) {
+                                console.log("滑块验证服务不在运行，请联系作者")
+                                $.msg($.name, `滑块验证服务不在运行，请联系作者`);
+                                break
+                            }
                         }
                         console.log(getXpos)
                         let checkUserCapCode = await commonPost(`/checkUserCapCode`,{"xpos":getXpos.x_coordinate})
@@ -483,11 +489,11 @@ async function commonPost(url,body) {
     })
 }
 
-async function slidePost(body) {
+async function slidePost(url,body) {
     return new Promise(resolve => {
         let  params = getSign({}, body);
         const options = {
-            url: `http://huakuai.xzxxn7.live/detect_slider_position`,
+            url: `http://${url}/detect_slider_position`,
             headers: {
                 'Content-Type': 'application/json',
             },

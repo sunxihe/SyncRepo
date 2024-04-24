@@ -38,7 +38,7 @@ async function main() {
                     let count = (task.rewardLimit - task.singleReward)/5
                     let sorts = await cdnGet(`/posts/sorts?sortType=NEWEST&pageNum=1&pageSize=10&groupClassId=0`)
                     for (let sort of sorts.data.list) {
-                        while (count > 0) {
+                        if (count > 0) {
                             let comment = await commonPost(`/postsComments`,{"customizeImages":[],"content":"好","postsId":sort.id,"publisherId":id,"floorId":"","voice":""})
                             console.log(`评论成功,获得：${comment.data.taskResult.singleReward}`)
                             count--
@@ -50,14 +50,14 @@ async function main() {
                     let count = (task.rewardLimit - task.singleReward)/5
                     let sorts = await cdnGet(`/posts/sorts?sortType=NEWEST&pageNum=1&pageSize=10&groupClassId=0`)
                     for (let sort of sorts.data.list) {
-                        while (count > 0) {
+                        if (count > 0) {
                             let follow = await commonPut(`/user/follow`,{"followUserId":sort.publisherId,"decision":true})
                             if (follow.data) {
-                                console.log(`点赞成功,获得：${follow.data.singleReward}`)
+                                console.log(`关注成功,获得：${follow.data.singleReward}`)
                                 count--
                             }
                             let unFollow = await commonPut(`/user/follow`,{"followUserId":sort.publisherId,"decision":false})
-                            console.log(`取消点赞成功`)
+                            console.log(`取消关注成功`)
                         }
                     }
                 }
@@ -66,7 +66,7 @@ async function main() {
                     let count = (task.rewardLimit - task.singleReward)/5
                     let goods = await cdnGet(`/integralGoods?orderField=sort&orderScheme=DESC&pageSize=10&pageNum=1`)
                     for (let good of goods.data.list) {
-                        while (count > 0) {
+                        if (count > 0) {
                             let goodDetail = await cdnGet(`/integralGoods/${good.id}?type=`)
                             let like = await commonPost(`/live/likeLiveItem`,{"isLike":true,"dailyTaskId":task.id,"productId":goodDetail.data.outerId})
                             console.log(`收藏成功,获得：${like.data.singleReward}`)
@@ -81,7 +81,7 @@ async function main() {
                     let count = (task.rewardLimit - task.singleReward)/5
                     let sorts = await cdnGet(`/posts/sorts?sortType=NEWEST&pageNum=1&pageSize=10&groupClassId=0`)
                     for (let sort of sorts.data.list) {
-                        while (count > 0) {
+                        if (count > 0) {
                             let like = await commonPut(`/posts/like`,{"postsId":sort.id,"decision":true})
                             console.log(`点赞成功,获得：${like.data.singleReward}`)
                             let unLike = await commonPut(`/posts/like`,{"postsId":sort.id,"decision":false})

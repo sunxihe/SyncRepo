@@ -35,7 +35,7 @@ async function main() {
             } else {
                 //发帖
                 if (task.id == 14) {
-                    for (let i = 0; i < (task.rewardLimit - task.singleReward)/5; i++) {
+                    for (let i = task.finishNum; i < (task.rewardLimit)/(task.singleReward); i++) {
                         let posts = await commonPost(`/posts`,{"topicNames":["进来笑一个"],"content":"护士：你今天有福了，梁老板亲自给你做检查熊顿：梁医生？为什么叫他老板？护士：因为他老板着脸——《滚蛋吧！肿瘤君》","medias":["https://static.xinc818.com/console/console/28fc4bbb-2678-4957-a619-099898894145.png"],"groupId":0,"groupClassifyId":0,"attachments":[{"enumType":1,"url":"https://static.xinc818.com/console/console/28fc4bbb-2678-4957-a619-099898894145.png"}],"voteType":0,"commentType":"0","dailyTaskId":task.id,"platform":"windows","sid":1713957614844})
                         if (posts.code == 0) {
                             console.log(`任务完成,获得：${posts.data.singleReward}`)
@@ -47,7 +47,7 @@ async function main() {
                 }
                 //参与讨论
                 if (task.id == 17) {
-                    let count = (task.rewardLimit - task.singleReward)/5
+                    let count = (task.rewardLimit)/(task.singleReward) - task.finishNum
                     let sorts = await cdnGet(`/posts/sorts?sortType=NEWEST&pageNum=1&pageSize=10&groupClassId=0`)
                     for (let sort of sorts.data.list) {
                         if (count > 0) {
@@ -59,7 +59,7 @@ async function main() {
                 }
                 //关注用户
                 if (task.id == 19) {
-                    let count = (task.rewardLimit - task.singleReward)/5
+                    let count = (task.rewardLimit)/(task.singleReward) - task.finishNum
                     let sorts = await cdnGet(`/posts/sorts?sortType=NEWEST&pageNum=1&pageSize=10&groupClassId=0`)
                     for (let sort of sorts.data.list) {
                         if (count > 0) {
@@ -75,7 +75,7 @@ async function main() {
                 }
                 //想要商品
                 if (task.id == 20) {
-                    let count = (task.rewardLimit - task.singleReward)/5
+                    let count = (task.rewardLimit)/(task.singleReward) - task.finishNum
                     let goods = await cdnGet(`/integralGoods?orderField=sort&orderScheme=DESC&pageSize=10&pageNum=1`)
                     for (let good of goods.data.list) {
                         if (count > 0) {
@@ -90,7 +90,7 @@ async function main() {
                 }
                 //点赞用户
                 if (task.id == 18) {
-                    let count = (task.rewardLimit - task.singleReward)/5
+                    let count = (task.rewardLimit)/(task.singleReward) - task.finishNum
                     let sorts = await cdnGet(`/posts/sorts?sortType=NEWEST&pageNum=1&pageSize=10&groupClassId=0`)
                     for (let sort of sorts.data.list) {
                         if (count > 0) {
@@ -104,14 +104,14 @@ async function main() {
                 }
                 //分享心喜
                 if (task.id == 16) {
-                    for (let i = 0; i < (task.rewardLimit - task.singleReward)/15; i++) {
+                    for (let i = task.finishNum; i < (task.rewardLimit)/(task.singleReward); i++) {
                         let finish = await commonGet(`/dailyTask/share`)
                         console.log(`任务完成,获得：${finish.data.singleReward}`)
                     }
                 }
                 //去商城浏览30秒
                 if (task.id == 22) {
-                    for (let i = 0; i < (task.rewardLimit - task.singleReward)/20; i++) {
+                    for (let i = task.finishNum; i < (task.rewardLimit)/(task.singleReward); i++) {
                         let finish = await commonGet(`/dailyTask/browseGoods/${task.id}`)
                         console.log(`任务完成,获得：${finish.data.singleReward}`)
                     }

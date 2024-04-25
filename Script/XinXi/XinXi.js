@@ -134,20 +134,23 @@ async function main() {
         //走路赢麻了
         console.log("————————————")
         console.log("走路赢麻了")
-        let count = 50;
-        while (count > 0) {
-            let queryDiceNum = await commonGet("/walkCell/queryDiceNum")
-            let initMap = await commonGet("/walkCell/initMap")
-            if (initMap.data.cellType == 3) {
-                console.log(`获得碎片：${initMap.data.prizeResultDTO.pieceName}`)
+        let queryUserStepTotal = await commonGet("/walkStep/queryUserStepTotal")
+        if (queryUserStepTotal.data > 100) {
+            let count = parseInt(queryUserStepTotal/100);
+            while (count > 0) {
+                let queryDiceNum = await commonGet("/walkCell/queryDiceNum")
+                let initMap = await commonGet("/walkCell/initMap")
+                if (initMap.data.cellType == 3) {
+                    console.log(`获得碎片：${initMap.data.prizeResultDTO.pieceName}`)
+                }
+                if (initMap.data.cellType == 4) {
+                    console.log(`获得喜点：${initMap.data.prizeResultDTO.integralNum}`)
+                }
+                if (initMap.data.cellType == 5 || initMap.data.cellType == 6) {
+                    console.log(`${initMap.data.content}`)
+                }
+                count--
             }
-            if (initMap.data.cellType == 4) {
-                console.log(`获得喜点：${initMap.data.prizeResultDTO.integralNum}`)
-            }
-            if (initMap.data.cellType == 5 || initMap.data.cellType == 6) {
-                console.log(`${initMap.data.content}`)
-            }
-            count--
         }
         //喜点查询
         console.log("————————————")

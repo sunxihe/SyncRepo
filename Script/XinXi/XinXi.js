@@ -136,7 +136,7 @@ async function main() {
         console.log("走路赢麻了")
         let queryUserStepTotal = await commonGet("/walkStep/queryUserStepTotal")
         if (queryUserStepTotal.data > 100) {
-            let count = parseInt(queryUserStepTotal/100);
+            let count = parseInt(queryUserStepTotal.data/100);
             while (count > 0) {
                 let queryDiceNum = await commonGet("/walkCell/queryDiceNum")
                 let initMap = await commonGet("/walkCell/initMap")

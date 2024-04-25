@@ -25,6 +25,9 @@ async function main() {
         let sign = await commonPost('/app/jingyoujia/taskContinuousRecord',{"taskId":5})
         if (sign.code == 200) {
             console.log(`获得：${sign.data.integral}`)
+        } else if (sign.code == 401) {
+            $.msg($.name, `用户：${mobile}`, `token已过期，请重新获取`);
+            continue
         } else {
             console.log(sign.msg)
         }
@@ -76,9 +79,13 @@ async function main() {
         let addShareCount = await commonPost('/business/Mountain/addShareCount',{"taskCode":66})
         //积分换次数
         let addIntegralChance = await commonPost('/business/Mountain/addIntegralChance',{"taskCode":66})
-        let getAscendedChanceCount = await commonGet('/business/Mountain/getAscendedChanceCount')
-        for (let i = 0; i < getAscendedChanceCount.data.useCount; i++) {
+        //let getAscendedChanceCount = await commonGet('/business/Mountain/getAscendedChanceCount')
+        while (true) {
             let gameStart = await commonPost('/business/Mountain/gameStart',{"activityType":"MOUNTAIN_CLIMBING_2024","currentTime":await formattedDate(),"gameNo":66,"latitude":lat,"longitude":lon})
+            if (gameStart.code == 500) {
+                console.log(gameStart.msg)
+                break
+            }
             let gameDraw = await commonPost('/business/Mountain/gameDraw',{"activityType":"MOUNTAIN_CLIMBING_2024","recordNumber":580,"recordId":gameStart.data,"latitude":lat,"longitude":lon,"isIntegral":null})
             if (gameDraw.code == 200) {
                 console.log(`抽奖获得：${gameDraw.data.awardName}`)

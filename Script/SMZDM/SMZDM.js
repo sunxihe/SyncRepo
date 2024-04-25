@@ -13,18 +13,24 @@ async function main() {
         id = item.id;
         cookie = item.cookie;
         console.log(`用户：${id}开始任务`)
-        let time = new Date().getTime();
-        let sign = md5(`basic_v=0&f=android&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
         //签到
         console.log("开始签到")
+        let time = new Date().getTime();
+        let sign = md5(`basic_v=0&f=android&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
         let getToken = await commonPost("https://user-api.smzdm.com/robot/token",`basic_v=0&f=android&sign=${sign}&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
         token = getToken.data.token
+        time = new Date().getTime();
+        sign = md5(`basic_v=0&f=android&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
         let checkin = await commonPost("https://user-api.smzdm.com/checkin",`basic_v=0&f=android&sign=${sign}&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
         console.log(checkin.error_msg);
+        time = new Date().getTime();
+        sign = md5(`basic_v=0&f=android&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
         let reward = await commonPost("https://user-api.smzdm.com/checkin/all_reward",`basic_v=0&f=android&sign=${sign}&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
         if (reward.error_code === 0) {
             console.log(`${reward.data.normal_reward.top_title}：${reward.data.normal_reward.gift.content_str}`)
         }
+        time = new Date().getTime();
+        sign = md5(`basic_v=0&f=android&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
         let show = await commonPost("https://user-api.smzdm.com/checkin/show_view_v2",`basic_v=0&f=android&sign=${sign}&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
         for (const item of show.data.rows) {
             if (item.cell_title === '做任务得奖励') {
@@ -33,39 +39,58 @@ async function main() {
                 }
                 for (const task of item.cell_data.activity_task.accumulate_list.task_list) {
                     console.log(`任务：${task.task_name} id：${task.task_id} 状态：${task.task_status}`);
-                    if (task.task_status === 4) {
+                    if (task.task_status == 4) {
                         console.log(`任务已完成`);
                     } else {
                         //达人关注推荐
                         if (task.task_id === "aywr32j") {
                             let count = task.task_even_num - task.task_finished_num;
+                            time = new Date().getTime();
+                            sign = md5(`basic_v=0&f=android&nav_id=${task.task_redirect_url.link_val}&page=1&time=${time}&type=user&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
                             let result = await commonPost("https://dingyue-api.smzdm.com/tuijian/search_result",`basic_v=0&f=android&nav_id=${task.task_redirect_url.link_val}&page=1&sign=${sign}&time=${time}&type=user&v=11.0.0&weixin=1&zhuanzai_ab=a`)
                             for (const article of result.data.rows) {
                                 while (count > 0) {
+                                    time = new Date().getTime();
+                                    sign = md5(`basic_v=0&daren_id=${article.keyword}&f=android&follow_user_times_today=1&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
                                     let follow = await commonGet(`https://article-api.smzdm.com/dingyue/daren_follow_recommend?basic_v=0&daren_id=${article.keyword}&f=android&follow_user_times_today=1&sign=${sign}&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
+                                    console.log(follow)
                                     count--;
                                 }
                             }
                         }
                         //NAS备份之道
                         if (task.task_id === "ajg7k6j") {
+                            time = new Date().getTime();
+                            sign = md5(`article_id=${task.article_id}&basic_v=0&channel_id=${task.channel_id}&f=android&task_even_num=${task.task_even_num}&task_event_type=${task_event_type}&task_finished_num=${task.task_finished_num}&task_id=${task.task_id}&task_type=&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
                             let finish = await commonPost("https://user-api.smzdm.com/task/event_view_article_sync",`article_id=${task.article_id}&basic_v=0&channel_id=${task.channel_id}&f=android&sign=${sign}&task_even_num=${task.task_even_num}&task_event_type=${task_event_type}&task_finished_num=${task.task_finished_num}&task_id=${task.task_id}&task_type=&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
+                            time = new Date().getTime();
+                            sign = md5(`article_id=${task.article_id}&basic_v=0&channel_id=${task.channel_id}&f=android&robot_token=${token}&task_even_num=${task.task_even_num}&task_event_type=${task_event_type}&task_finished_num=${task.task_finished_num}&task_id=${task.task_id}&task_type=&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
                             let receive = await commonPost("https://user-api.smzdm.com/task/activity_task_receive",`article_id=${task.article_id}&basic_v=0&channel_id=${task.channel_id}&f=android&robot_token=${token}&sign=${sign}&task_even_num=${task.task_even_num}&task_event_type=${task_event_type}&task_finished_num=${task.task_finished_num}&task_id=${task.task_id}&task_type=&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
                             console.log(receive.data.reward_msg);
                         }
                         //实测家漫谈
                         if (task.task_id === "ajg7k6j") {
+                            time = new Date().getTime();
+                            sign = md5(`article_id=${task.article_id}&basic_v=0&channel_id=${task.channel_id}&f=android&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
                             let finish = await commonPost("https://user-api.smzdm.com/task/event_view_article",`article_id=${task.article_id}&basic_v=0&channel_id=${task.channel_id}&f=android&sign=${sign}&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
+                            time = new Date().getTime();
+                            sign = md5(`basic_v=0&f=android&robot_token=${token}&task_id=${task.task_id}&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
                             let receive = await commonPost("https://user-api.smzdm.com/task/activity_task_receive",`basic_v=0&f=android&robot_token=${token}&sign=${sign}&task_id=${task.task_id}&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
                             console.log(receive.data.reward_msg);
                         }
                         //分享社区文章
                         if (task.task_id === "ay9zmo1") {
                             let count = task.task_even_num - task.task_finished_num;
-                            let articles = await commonGet(`/ranking_list/articles?basic_v=0&channel_id=&f=android&offset=0&order=0&page=1&sign=${sign}&tab=2&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
+                            time = new Date().getTime();
+                            sign = md5(`basic_v=0&channel_id=&f=android&offset=0&order=0&page=1&tab=2&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
+                            let articles = await commonGet(`https://article-api.smzdm.com/ranking_list/articles?basic_v=0&channel_id=&f=android&offset=0&order=0&page=1&sign=${sign}&tab=2&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
                             for (const article of articles.data.rows) {
                                 while (count > 0) {
+                                    time = new Date().getTime();
+                                    sign = md5(`article_id=${article.article_id}&basic_v=0&channel_id=${article.channel_id}&f=android&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
                                     let share = await commonPost("https://user-api.smzdm.com/share/article_reward",`article_id=${article.article_id}&basic_v=0&channel_id=${article.channel_id}&f=android&sign=${sign}&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
+                                    time = new Date().getTime();
+                                    sign = md5(`basic_v=0&f=android&robot_token=${token}&task_id=${task.task_id}&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
                                     let receive = await commonPost("https://user-api.smzdm.com/task/activity_task_receive",`basic_v=0&f=android&robot_token=${token}&sign=${sign}&task_id=${task.task_id}&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
                                     console.log(receive.data.reward_msg);
                                     count--;
@@ -76,7 +101,7 @@ async function main() {
                 }
             }
         }
-        let rewardList = await commonPost("https://h5.smzdm.com/user/pack/ajax_get_reward_list",'type=0')
+        let rewardList = await commonPost("https://h5.smzdm.com/user/pack/ajax_get_reward_list","type=0")
         for (const reward of rewardList.data.unreceive) {
             console.log(`${reward.pack_name}：${reward.pack_description}`);
             if (reward.is_real_filter === 1) {
@@ -117,26 +142,34 @@ async function getCookie() {
     $.setjson(SMZDM, "SMZDM");
 }
 
-async function commonPost(url,body = {}) {
+async function commonPost(url,body = '') {
     return new Promise(resolve => {
         const options = {
-            url: `${url}`,
+            url: url,
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "User-Agent": "smzdm_android_V10.4.1 rv:841 (22021211RC;Android12;zh)smzdmapp",
+                "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+                "accept": "application/json, text/plain, */*",
+                "sec-fetch-site": "same-origin",
+                "accept-language": "zh-CN,zh-Hans;q=0.9",
+                "accept-encoding": "gzip, deflate, br",
+                "sec-fetch-mode": "cors",
+                "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148/smzdm 11.0.0 rv:147.2 (iPhone 14 Pro; iOS 17.5; zh_CN)/iphone_smzdmapp/11.0.0/wkwebview/jsbv_1.0.0",
                 "Cookie": cookie,
+                "sec-fetch-dest": "empty",
+                "referer": "https://h5.smzdm.com/user/pack/?f=android&s=hYvr4wJOHZo/ATaM70089wIrIbNUHAUidKbTZgOTOIGdrfrmrIaWtz0ftUYsoTTYW1lBzGyffk=&device=iPhone15,2&v=11.0.0"
             },
-            body:body
+            body: body
         }
-        $.post(options, (err, resp, data) => {
+        $.post(options, async (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
                     console.log(`${$.name} API请求失败，请检查网路重试`)
                 } else {
+                    await $.wait(2000)
                     resolve(JSON.parse(data));
                 }
-            } catch (e) {
+        } catch (e) {
                 $.logErr(e, resp)
             } finally {
                 resolve();
@@ -145,22 +178,26 @@ async function commonPost(url,body = {}) {
     })
 }
 
-async function commonGet() {
+async function commonGet(url) {
     return new Promise(resolve => {
         const options = {
-            url: `https://article-api.smzdm.com${url}`,
+            url: url,
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "User-Agent": "smzdm_android_V10.4.1 rv:841 (22021211RC;Android12;zh)smzdmapp",
+                "accept": "*/*",
+                "content-encoding": "gzip",
+                "accept-language": "zh-Hans-CN;q=1, en-CN;q=0.9, ko-KR;q=0.8, zh-Hant-CN;q=0.7, io-Latn-CN;q=0.6",
+                "accept-encoding": "gzip, deflate, br",
+                "User-Agent": "smzdm 11.0.0 rv:147.2 (iPhone 14 Pro; iOS 17.5; zh_CN)/iphone_smzdmapp/11.0.0",
                 "Cookie": cookie,
             },
         }
-        $.get(options, (err, resp, data) => {
+        $.get(options, async (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
                     console.log(`${$.name} API请求失败，请检查网路重试`)
                 } else {
+                    await $.wait(2000)
                     resolve(JSON.parse(data));
                 }
             } catch (e) {

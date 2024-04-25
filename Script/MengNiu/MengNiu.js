@@ -48,6 +48,10 @@ async function main() {
         //签到
         console.log("开始签到")
         let sign = await mcommonPost("/xcx/u/signin",encrypt({"token":token,"b":2617,"lat":"","lng":""}))
+        if (sign.flag == 40317) {
+            $.msg($.name, `用户：${userId}`, `token已过期，请重新获取`);
+            continue
+        }
         if (sign.flag == 0 && sign.data.success == 0) {
             console.log(`获得营养值：${sign.data.data.coin}`)
         } else {

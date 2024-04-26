@@ -222,7 +222,7 @@ async function main() {
         for (let item of wine.data) {
             console.log(`酒*${item.crrent_volumn} 收获时间：${item.crop_time}`)
             if (item.status == 4) {
-                let harvestWine = await commonGet(`/garden/gardenmemberwine/harvest?id=${item.id}`);
+                let harvestWine = await commonGet(`/garden/gardenmemberwine/harvestWine?id=${item.id}`);
                 console.log(harvestWine.msg)
             }
         }

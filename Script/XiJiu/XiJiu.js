@@ -25,7 +25,9 @@ async function main() {
         console.log("开始每日验证")
         let getValidateInfo = await commonGet(`/garden/slide_validate/getValidateInfo`);
         if (getValidateInfo.data.status == 1) {
-            let getXpos = await slidePost('huakuai.xzxxn7.live',{'gap': getValidateInfo.data.datas[1], 'bg': getValidateInfo.data.datas[0]})
+            let gap = getValidateInfo.data.datas[1].split(",")[1];
+            let bg = getValidateInfo.data.datas[0].split(",")[1];
+            let getXpos = await slidePost('huakuai.xzxxn7.live',{'gap': gap, 'bg': bg})
             if (!getXpos) {
                 getXpos = await slidePost('107.22.24.202:9999',{'gap': getValidateInfo.data.datas[1], 'bg': getValidateInfo.data.datas[0]})
                 if (!getXpos) {

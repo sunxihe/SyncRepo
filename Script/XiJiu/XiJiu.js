@@ -141,7 +141,7 @@ async function main() {
                 if (task.id == 1) {
                     let question = await commonGet(`/garden/Gardenquestiontask/index`);
                     let answer = [{"itemid":`${question.data[0].id}`,"selected":`${question.data[0].answer}`}]
-                    let answerResults = await commonGet(`/garden/Gardenquestiontask/answerResults?answer=${encodeURI(answer)}`);
+                    let answerResults = await commonGet(`/garden/Gardenquestiontask/answerResults?answer=${encodeURI(JSON.stringify(answer))}`);
                     console.log(answerResults.msg)
                 }
                 if (task.id == 2) {
@@ -263,7 +263,7 @@ async function commonPost(url,body = '') {
                     console.log(`${JSON.stringify(err)}`)
                     console.log(`${$.name} API请求失败，请检查网路重试`)
                 } else {
-                    await $.wait(2000);
+                    await $.wait(4000);
                     resolve(JSON.parse(data));
                 }
             } catch (e) {
@@ -300,7 +300,7 @@ async function commonGet(url) {
                     console.log(`${JSON.stringify(err)}`)
                     console.log(`${$.name} API请求失败，请检查网路重试`)
                 } else {
-                    await $.wait(2000);
+                    await $.wait(4000);
                     resolve(JSON.parse(data));
                 }
             } catch (e) {

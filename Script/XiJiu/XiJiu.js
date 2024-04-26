@@ -171,7 +171,7 @@ async function main() {
         console.log("开始制曲")
         let code = 0
         while (code == 0) {
-            let makeWineYeast = await commonPost("/garden/wheat/makeWineYeast",'volumn=100');
+            let makeWineYeast = await makePost("/garden/wheat/makeWineYeast",'volumn=100');
             console.log(makeWineYeast.msg)
             code = makeWineYeast.err
         }
@@ -181,7 +181,7 @@ async function main() {
         let wine = await commonGet("/garden/gardenmemberwine/index");
         if (wine.total == 0) {
             console.log("没有正在酿造的酒，开始制酒")
-            let makeWine = await commonPost("/garden/gardenmemberwine/makeWine",'volumn=200');
+            let makeWine = await makePost("/garden/gardenmemberwine/makeWine",'volumn=200');
             console.log(makeWine.msg)
         }
         for (let item of wine.data) {
@@ -247,6 +247,44 @@ async function commonPost(url,body = '') {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) XWEB/9129',
                 'Content-Type': 'application/json',
                 'Accept': '*/*',
+                'Origin': 'https://mallwm.exijiu.com',
+                'Sec-Fetch-Site': 'cross-site',
+                'Sec-Fetch-Mode': 'cors',
+                'Sec-Fetch-Dest': 'empty',
+                'Referer': 'https://servicewechat.com/wx673f827a4c2c94fa/264/page-frame.html',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Accept-Language': 'zh-CN,zh;q=0.9'
+            },
+            body: body,
+        }
+        $.post(options, async (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`${$.name} API请求失败，请检查网路重试`)
+                } else {
+                    await $.wait(4000);
+                    resolve(JSON.parse(data));
+                }
+            } catch (e) {
+                $.logErr(e, resp)
+            } finally {
+                resolve();
+            }
+        })
+    })
+}
+
+async function makePost(url,body = '') {
+    return new Promise(resolve => {
+        const options = {
+            url: `https://apimallwm.exijiu.com${url}`,
+            headers : {
+                'Connection': 'keep-alive',
+                'Authorization': token,
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) XWEB/9129',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json, text/plain, */*',
                 'Origin': 'https://mallwm.exijiu.com',
                 'Sec-Fetch-Site': 'cross-site',
                 'Sec-Fetch-Mode': 'cors',

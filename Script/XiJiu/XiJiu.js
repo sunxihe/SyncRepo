@@ -17,7 +17,7 @@ async function main() {
         console.log(`用户：${id}开始任务`)
         //签到
         console.log("开始签到")
-        let sign = await commonGet("/member/Signin");
+        let sign = await commonPost("/member/Signin/sign",'from=miniprogram_index');
         console.log(sign.msg)
         //农场
         //每日验证
@@ -159,7 +159,9 @@ async function main() {
         console.log("————————————")
         console.log("开始添加好友")
         let addFriendToken = await commonGet("/garden/friends/addFriendToken");
-        console.log(`助力码：${JSON.stringify(addFriendToken.data)}`)
+        addFriendToken = addFriendToken.data;
+        addFriendToken.friend_id = id
+        console.log(`助力码：${JSON.stringify(addFriendToken)}`)
         //let add = await commonPost("/garden/friends/add",JSON.stringify({"friend_id":"15920333","time":"1714111454","token":"d75d8073df5b1d10507d6e30677d68c9"}));
         //console.log(add.msg)
         //制曲

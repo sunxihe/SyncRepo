@@ -141,7 +141,7 @@ async function main() {
                 if (task.id == 1) {
                     let question = await commonGet(`/garden/Gardenquestiontask/index`);
                     let answer = [{"itemid":5,"selected":`${question.data[0].answer}`}]
-                    let answerResults = await commonGet(`/garden/Gardenquestiontask/answerResults?answer=${answer}`);
+                    let answerResults = await commonGet(`/garden/Gardenquestiontask/answerResults?answer=${encodeURI(answer)}`);
                     console.log(answerResults.msg)
                 }
                 if (task.id == 2) {

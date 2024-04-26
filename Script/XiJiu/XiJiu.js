@@ -206,7 +206,7 @@ async function main() {
 }
 
 async function getCookie() {
-    const token = $request.headers["authorization"];
+    const token = $request.headers["authorization"] || $request.headers["Authorization"];
     if (!token) {
         return
     }

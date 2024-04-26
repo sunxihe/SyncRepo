@@ -43,7 +43,7 @@ async function main() {
                         console.log(`任务已完成`);
                     } else {
                         //达人关注推荐
-                        if (task.task_id === "aywr32j") {
+                        if (task.task_name === "达人关注推荐") {
                             let count = task.task_even_num - task.task_finished_num;
                             time = new Date().getTime();
                             sign = md5(`basic_v=0&f=android&nav_id=${task.task_redirect_url.link_val}&page=1&time=${time}&type=user&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
@@ -59,7 +59,7 @@ async function main() {
                             }
                         }
                         //NAS备份之道
-                        if (task.task_id === "ajg7k6j") {
+                        if (task.task_name === "NAS备份之道") {
                             if (task.task_status == 3) {
                                 console.log(`领取奖励`);
                                 time = new Date().getTime();
@@ -77,7 +77,7 @@ async function main() {
                             }
                         }
                         //实测家漫谈
-                        if (task.task_id === "ajg7k6j") {
+                        if (task.task_name === "实测家漫谈") {
                             if (task.task_status == 3) {
                                 console.log(`领取奖励`);
                                 time = new Date().getTime();
@@ -95,7 +95,7 @@ async function main() {
                             }
                         }
                         //分享社区文章
-                        if (task.task_id === "ay9zmo1") {
+                        if (task.task_name === "分享社区文章") {
                             let count = task.task_even_num - task.task_finished_num;
                             time = new Date().getTime();
                             sign = md5(`basic_v=0&channel_id=&f=android&offset=0&order=0&page=1&tab=2&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();

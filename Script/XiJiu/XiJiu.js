@@ -201,7 +201,7 @@ async function main() {
         console.log("查询积分")
         getMemberInfo = await commonGet("/garden/Gardenmemberinfo/getMemberInfo");
         console.log(`拥有积分：${getMemberInfo.data.integration} 拥有酒：${getMemberInfo.data.wine}`)
-        $.msg($.name, `用户：`, `拥有积分：${getMemberInfo.data.integration} 拥有酒：${getMemberInfo.data.wine}`);
+        $.msg($.name, `用户：${id}`, `拥有积分：${getMemberInfo.data.integration} 拥有酒：${getMemberInfo.data.wine}`);
     }
 }
 
@@ -310,7 +310,6 @@ async function commonGet(url) {
 
 async function slidePost(url,body) {
     return new Promise(resolve => {
-        let  params = getSign({}, body);
         const options = {
             url: `http://${url}/detect_slider_position`,
             headers: {

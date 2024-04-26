@@ -14,6 +14,7 @@
 |      网易严选      |        [WYYX](https://github.com/xzxxn777/Surge/blob/main/Script/WYYX)        | ✅(2024/04/24) |      ✅️      |
 |      涌鑫充电      |        [YongXin](https://github.com/xzxxn777/Surge/blob/main/Script/YongXin)        | ✅(2024/04/24) |      ✅️      |
 |      辛喜      |        [XinXi](https://github.com/xzxxn777/Surge/blob/main/Script/XinXi)        | ✅(2024/04/24) |      ✅️      |
+|      习酒      |        [XinXi](https://github.com/xzxxn777/Surge/blob/main/Script/XiJiu)        | ✅(2024/04/26) |      ✅️      |
 
 ------
 ### [一键订阅boxjs](http://boxjs.com/#/sub/add/https://raw.githubusercontent.com/xzxxn777/quanx/main/xzxxn.json)

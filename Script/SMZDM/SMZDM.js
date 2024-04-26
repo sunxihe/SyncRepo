@@ -60,23 +60,39 @@ async function main() {
                         }
                         //NAS备份之道
                         if (task.task_id === "ajg7k6j") {
-                            time = new Date().getTime();
-                            sign = md5(`article_id=${task.article_id}&basic_v=0&channel_id=${task.channel_id}&f=android&task_even_num=${task.task_even_num}&task_event_type=${task_event_type}&task_finished_num=${task.task_finished_num}&task_id=${task.task_id}&task_type=&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
-                            let finish = await commonPost("https://user-api.smzdm.com/task/event_view_article_sync",`article_id=${task.article_id}&basic_v=0&channel_id=${task.channel_id}&f=android&sign=${sign}&task_even_num=${task.task_even_num}&task_event_type=${task_event_type}&task_finished_num=${task.task_finished_num}&task_id=${task.task_id}&task_type=&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
-                            time = new Date().getTime();
-                            sign = md5(`article_id=${task.article_id}&basic_v=0&channel_id=${task.channel_id}&f=android&robot_token=${token}&task_even_num=${task.task_even_num}&task_event_type=${task_event_type}&task_finished_num=${task.task_finished_num}&task_id=${task.task_id}&task_type=&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
-                            let receive = await commonPost("https://user-api.smzdm.com/task/activity_task_receive",`article_id=${task.article_id}&basic_v=0&channel_id=${task.channel_id}&f=android&robot_token=${token}&sign=${sign}&task_even_num=${task.task_even_num}&task_event_type=${task_event_type}&task_finished_num=${task.task_finished_num}&task_id=${task.task_id}&task_type=&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
-                            console.log(receive.data.reward_msg);
+                            if (task.task_status == 3) {
+                                console.log(`领取奖励`);
+                                time = new Date().getTime();
+                                sign = md5(`article_id=${task.article_id}&basic_v=0&channel_id=${task.channel_id}&f=android&robot_token=${token}&task_even_num=${task.task_even_num}&task_event_type=${task.task_event_type}&task_finished_num=${task.task_finished_num}&task_id=${task.task_id}&task_type=&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
+                                let receive = await commonPost("https://user-api.smzdm.com/task/activity_task_receive",`article_id=${task.article_id}&basic_v=0&channel_id=${task.channel_id}&f=android&robot_token=${token}&sign=${sign}&task_even_num=${task.task_even_num}&task_event_type=${task.task_event_type}&task_finished_num=${task.task_finished_num}&task_id=${task.task_id}&task_type=&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
+                                console.log(receive.data.reward_msg);
+                            } else {
+                                time = new Date().getTime();
+                                sign = md5(`article_id=${task.article_id}&basic_v=0&channel_id=${task.channel_id}&f=android&task_even_num=${task.task_even_num}&task_event_type=${task.task_event_type}&task_finished_num=${task.task_finished_num}&task_id=${task.task_id}&task_type=&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
+                                let finish = await commonPost("https://user-api.smzdm.com/task/event_view_article_sync",`article_id=${task.article_id}&basic_v=0&channel_id=${task.channel_id}&f=android&sign=${sign}&task_even_num=${task.task_even_num}&task_event_type=${task.task_event_type}&task_finished_num=${task.task_finished_num}&task_id=${task.task_id}&task_type=&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
+                                time = new Date().getTime();
+                                sign = md5(`article_id=${task.article_id}&basic_v=0&channel_id=${task.channel_id}&f=android&robot_token=${token}&task_even_num=${task.task_even_num}&task_event_type=${task.task_event_type}&task_finished_num=${task.task_finished_num}&task_id=${task.task_id}&task_type=&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
+                                let receive = await commonPost("https://user-api.smzdm.com/task/activity_task_receive",`article_id=${task.article_id}&basic_v=0&channel_id=${task.channel_id}&f=android&robot_token=${token}&sign=${sign}&task_even_num=${task.task_even_num}&task_event_type=${task.task_event_type}&task_finished_num=${task.task_finished_num}&task_id=${task.task_id}&task_type=&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
+                                console.log(receive.data.reward_msg);
+                            }
                         }
                         //实测家漫谈
                         if (task.task_id === "ajg7k6j") {
-                            time = new Date().getTime();
-                            sign = md5(`article_id=${task.article_id}&basic_v=0&channel_id=${task.channel_id}&f=android&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
-                            let finish = await commonPost("https://user-api.smzdm.com/task/event_view_article",`article_id=${task.article_id}&basic_v=0&channel_id=${task.channel_id}&f=android&sign=${sign}&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
-                            time = new Date().getTime();
-                            sign = md5(`basic_v=0&f=android&robot_token=${token}&task_id=${task.task_id}&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
-                            let receive = await commonPost("https://user-api.smzdm.com/task/activity_task_receive",`basic_v=0&f=android&robot_token=${token}&sign=${sign}&task_id=${task.task_id}&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
-                            console.log(receive.data.reward_msg);
+                            if (task.task_status == 3) {
+                                console.log(`领取奖励`);
+                                time = new Date().getTime();
+                                sign = md5(`basic_v=0&f=android&robot_token=${token}&task_id=${task.task_id}&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
+                                let receive = await commonPost("https://user-api.smzdm.com/task/activity_task_receive",`basic_v=0&f=android&robot_token=${token}&sign=${sign}&task_id=${task.task_id}&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
+                                console.log(receive.data.reward_msg);
+                            } else {
+                                time = new Date().getTime();
+                                sign = md5(`article_id=${task.article_id}&basic_v=0&channel_id=${task.channel_id}&f=android&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
+                                let finish = await commonPost("https://user-api.smzdm.com/task/event_view_article",`article_id=${task.article_id}&basic_v=0&channel_id=${task.channel_id}&f=android&sign=${sign}&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
+                                time = new Date().getTime();
+                                sign = md5(`basic_v=0&f=android&robot_token=${token}&task_id=${task.task_id}&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a&key=apr1$AwP!wRRT$gJ/q.X24poeBInlUJC`).toUpperCase();
+                                let receive = await commonPost("https://user-api.smzdm.com/task/activity_task_receive",`basic_v=0&f=android&robot_token=${token}&sign=${sign}&task_id=${task.task_id}&time=${time}&v=11.0.0&weixin=1&zhuanzai_ab=a`)
+                                console.log(receive.data.reward_msg);
+                            }
                         }
                         //分享社区文章
                         if (task.task_id === "ay9zmo1") {

@@ -70,11 +70,12 @@ async function main() {
                     if (getMemberInfo.data.wine_yeast > 0) {
                         //高粱
                         let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":1}))
+                        console.log(seed.msg)
                     } else {
                         //小麦
                         let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":2}))
+                        console.log(seed.msg)
                     }
-                    console.log(seed.msg)
                 } else {
                     console.log(extend.msg)
                 }
@@ -85,12 +86,31 @@ async function main() {
                 if (land.status == 0) {
                     console.log(`${name}已收获，未种植`)
                     console.log(`开始种植`)
-                    let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":land.type}))
-                    console.log(seed.msg)
+                    getMemberInfo = await commonGet("/garden/Gardenmemberinfo/getMemberInfo");
+                    if (getMemberInfo.data.wine_yeast > 0) {
+                        //高粱
+                        let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":1}))
+                        console.log(seed.msg)
+                    } else {
+                        //小麦
+                        let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":2}))
+                        console.log(seed.msg)
+                    }
                 } else if (land.status == 2) {
                     console.log(`${name}已成熟，开始收获`)
                     let harvest = await commonPost(`/garden/sorghum/harvest`,JSON.stringify({"id":land.id}));
                     console.log(harvest.msg)
+                    console.log(`开始种植`)
+                    getMemberInfo = await commonGet("/garden/Gardenmemberinfo/getMemberInfo");
+                    if (getMemberInfo.data.wine_yeast > 0) {
+                        //高粱
+                        let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":1}))
+                        console.log(seed.msg)
+                    } else {
+                        //小麦
+                        let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":2}))
+                        console.log(seed.msg)
+                    }
                 } else {
                     let code = 0
                     while (code == 0) {
@@ -112,8 +132,16 @@ async function main() {
                     let harvest = await commonPost(`/garden/sorghum/harvest`,JSON.stringify({"id":land.id}));
                     console.log(harvest.msg)
                     console.log(`开始种植`)
-                    let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":land.type}))
-                    console.log(seed.msg)
+                    getMemberInfo = await commonGet("/garden/Gardenmemberinfo/getMemberInfo");
+                    if (getMemberInfo.data.wine_yeast > 0) {
+                        //高粱
+                        let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":1}))
+                        console.log(seed.msg)
+                    } else {
+                        //小麦
+                        let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":2}))
+                        console.log(seed.msg)
+                    }
                     let code = 0
                     while (code == 0) {
                         let watering = await commonPost(`/garden/sorghum/watering`,JSON.stringify({"id":land.id}));

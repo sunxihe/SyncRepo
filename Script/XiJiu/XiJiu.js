@@ -82,7 +82,7 @@ async function main() {
                     console.log(extend.msg)
                 }
             } else {
-                console.log(`第${land.serial_number}块地：已解锁 收获时间：${land.crop_time}`)
+                console.log(`第${land.serial_number}块地：已解锁`)
                 let name = cropType.find(item => land.type in item)[land.type];
                 console.log(`种植：${name}*${land.volumn} 收获时间：${land.crop_time}`)
                 if (land.status == 0) {
@@ -144,18 +144,18 @@ async function main() {
                         let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":2}))
                         console.log(seed.msg)
                     }
-                    let code = 0
-                    while (code == 0) {
-                        let watering = await commonPost(`/garden/sorghum/watering`,JSON.stringify({"id":land.id}));
-                        console.log(watering.msg)
-                        code = watering.err
-                    }
-                    code = 0
-                    while (code == 0) {
-                        let manuring = await commonPost(`/garden/sorghum/manuring`,JSON.stringify({"id":land.id}));
-                        console.log(manuring.msg)
-                        code = manuring.err
-                    }
+                }
+                let code = 0
+                while (code == 0) {
+                    let watering = await commonPost(`/garden/sorghum/watering`,JSON.stringify({"id":land.id}));
+                    console.log(watering.msg)
+                    code = watering.err
+                }
+                code = 0
+                while (code == 0) {
+                    let manuring = await commonPost(`/garden/sorghum/manuring`,JSON.stringify({"id":land.id}));
+                    console.log(manuring.msg)
+                    code = manuring.err
                 }
             }
         }

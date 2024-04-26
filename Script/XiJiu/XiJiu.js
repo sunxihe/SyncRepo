@@ -2,6 +2,7 @@ const $ = new Env('习酒');
 const XiJiu = ($.isNode() ? process.env.XiJiu : $.getjson("XiJiu")) || [];
 const XiJiu_Exchange = ($.isNode() ? process.env.XiJiu_Exchange : $.getdata("XiJiu_Exchange")) || false;
 let cropType = [{"1":"高粱"},{"2":"小麦"}];
+let notice = '';
 !(async () => {
     if (typeof $request != "undefined") {
         await getCookie();
@@ -239,7 +240,10 @@ async function main() {
         console.log("查询积分")
         getMemberInfo = await commonGet("/garden/Gardenmemberinfo/getMemberInfo");
         console.log(`拥有积分：${getMemberInfo.data.integration} 拥有酒：${getMemberInfo.data.wine}`)
-        $.msg($.name, `用户：${id}`, `拥有积分：${getMemberInfo.data.integration} 拥有酒：${getMemberInfo.data.wine}`);
+        notice += `用户：${id} 积分：${getMemberInfo.data.integration} 酒：${getMemberInfo.data.wine} `
+    }
+    if (notice) {
+        $.msg($.name, '', notice);
     }
 }
 

@@ -58,28 +58,32 @@ async function main() {
         let getMemberInfo = await commonGet("/garden/Gardenmemberinfo/getMemberInfo");
         console.log(`拥有：高粱*${getMemberInfo.data.sorghum} 小麦*${getMemberInfo.data.wheat} 酒曲*${getMemberInfo.data.wine_yeast} 酒*${getMemberInfo.data.wine} 水*${getMemberInfo.data.water} 肥料*${getMemberInfo.data.manure}`)
         let lands = await commonGet("/garden/sorghum/index");
+        let unLock = true
         for (let land of lands.data) {
             if (land.status == -1) {
                 console.log(`第${land.serial_number}块地：未解锁`)
                 //解锁
-                console.log(`开始解锁土地`)
-                let extend = await commonPost(`/garden/sorghum/extend`,JSON.stringify({"serial_number":land.serial_number}))
-                if (extend.err == 0) {
-                    console.log(extend.msg)
-                    //种植
-                    console.log(`开始种植`)
-                    getMemberInfo = await commonGet("/garden/Gardenmemberinfo/getMemberInfo");
-                    if (getMemberInfo.data.wine_yeast > 0) {
-                        //高粱
-                        let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":1}))
-                        console.log(seed.msg)
+                if (unLock) {
+                    console.log(`开始解锁土地`)
+                    let extend = await commonPost(`/garden/sorghum/extend`,JSON.stringify({"serial_number":land.serial_number}))
+                    if (extend.err == 0) {
+                        console.log(extend.msg)
+                        //种植
+                        console.log(`开始种植`)
+                        getMemberInfo = await commonGet("/garden/Gardenmemberinfo/getMemberInfo");
+                        if (getMemberInfo.data.wine_yeast > 0) {
+                            //高粱
+                            let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":1}))
+                            console.log(seed.msg)
+                        } else {
+                            //小麦
+                            let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":2}))
+                            console.log(seed.msg)
+                        }
                     } else {
-                        //小麦
-                        let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":2}))
-                        console.log(seed.msg)
+                        console.log(extend.msg)
+                        unLock = false
                     }
-                } else {
-                    console.log(extend.msg)
                 }
             } else {
                 console.log(`第${land.serial_number}块地：已解锁`)

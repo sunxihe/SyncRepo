@@ -104,8 +104,8 @@ async function main() {
                     }
                 }
                 lands = await commonGet("/garden/sorghum/index");
-                const i = land.data.findIndex(e => e.id == land.id);
-                if (land.data[i].status == 2) {
+                const i = lands.data.findIndex(e => e.id == land.id);
+                if (lands.data[i].status == 2) {
                     console.log(`${name}已成熟，开始收获`)
                     let harvest = await commonPost(`/garden/sorghum/harvest`,JSON.stringify({"id":land.id}));
                     console.log(harvest.msg)
@@ -159,7 +159,7 @@ async function main() {
         console.log("————————————")
         console.log("开始添加好友")
         let addFriendToken = await commonGet("/garden/friends/addFriendToken");
-        console.log(`助力码：${addFriendToken.data}`)
+        console.log(`助力码：${JSON.stringify(addFriendToken.data)}`)
         //let add = await commonPost("/garden/friends/add",JSON.stringify({"friend_id":"15920333","time":"1714111454","token":"d75d8073df5b1d10507d6e30677d68c9"}));
         //console.log(add.msg)
         //制曲

@@ -75,10 +75,16 @@ async function main() {
                         if (getMemberInfo.data.wine_yeast > 0) {
                             //高粱
                             let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":1}))
+                            if (seed.err == 61010) {
+                                $.msg($.name, `用户：${id}`, seed.msg);
+                            }
                             console.log(seed.msg)
                         } else {
                             //小麦
                             let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":2}))
+                            if (seed.err == 61010) {
+                                $.msg($.name, `用户：${id}`, seed.msg);
+                            }
                             console.log(seed.msg)
                         }
                     } else {
@@ -97,10 +103,16 @@ async function main() {
                     if (getMemberInfo.data.wine_yeast > 0) {
                         //高粱
                         let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":1}))
+                        if (seed.err == 61010) {
+                            $.msg($.name, `用户：${id}`, seed.msg);
+                        }
                         console.log(seed.msg)
                     } else {
                         //小麦
                         let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":2}))
+                        if (seed.err == 61010) {
+                            $.msg($.name, `用户：${id}`, seed.msg);
+                        }
                         console.log(seed.msg)
                     }
                 } else if (land.status == 2) {
@@ -112,10 +124,16 @@ async function main() {
                     if (getMemberInfo.data.wine_yeast > 0) {
                         //高粱
                         let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":1}))
+                        if (seed.err == 61010) {
+                            $.msg($.name, `用户：${id}`, seed.msg);
+                        }
                         console.log(seed.msg)
                     } else {
                         //小麦
                         let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":2}))
+                        if (seed.err == 61010) {
+                            $.msg($.name, `用户：${id}`, seed.msg);
+                        }
                         console.log(seed.msg)
                     }
                 } else {
@@ -143,10 +161,16 @@ async function main() {
                     if (getMemberInfo.data.wine_yeast > 0) {
                         //高粱
                         let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":1}))
+                        if (seed.err == 61010) {
+                            $.msg($.name, `用户：${id}`, seed.msg);
+                        }
                         console.log(seed.msg)
                     } else {
                         //小麦
                         let seed = await commonPost(`/garden/sorghum/seed`,JSON.stringify({"id":land.id,"type":2}))
+                        if (seed.err == 61010) {
+                            $.msg($.name, `用户：${id}`, seed.msg);
+                        }
                         console.log(seed.msg)
                     }
                 }

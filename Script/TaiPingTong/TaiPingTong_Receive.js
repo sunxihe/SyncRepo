@@ -14,7 +14,7 @@ async function main() {
     token = TaiPingTong[TaiPingTong_Acc].token;
     userId = TaiPingTong[TaiPingTong_Acc].userId;
     console.log(`用户：${userId}开始兑换`)
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 20; i++) {
         let receive = await commonPost("/campaignsms/coin/exchange/receive",{"id":id,"appVersion":appVersion})
         console.log(receive);
     }

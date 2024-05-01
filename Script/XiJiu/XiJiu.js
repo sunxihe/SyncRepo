@@ -21,6 +21,10 @@ async function main() {
         //签到
         console.log("开始签到")
         let sign = await commonPost("/member/Signin/sign",'from=miniprogram_index');
+        if (sign.err == 4013) {
+            $.msg($.name, `用户：${id}`, `token已过期，请重新获取`);
+            continue
+        }
         console.log(sign.msg)
         //农场
         //每日验证
